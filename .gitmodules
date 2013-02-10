@@ -1,0 +1,3 @@
+[submodule "nvd3"]
+	path = nvd3
+	url = git://github.com/novus/nvd3.git
