@@ -23,11 +23,11 @@ module.exports = function (grunt) {
 			  "src/init.js",
 			  "src/outro.js"
 			],
-			dest : "lib/prgrmr.js"
+			dest : "assets/prgrmr.js"
 		  }
 		},
 		min : {
-			"lib/prgrmr.min.js" : ["<banner>", "lib/prgrmr.js"]
+			"assets/prgrmr.min.js" : ["<banner>", "assets/prgrmr.js"]
 		},
 		test : {
 		  files : ["test/**/*.js"]

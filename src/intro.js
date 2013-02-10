@@ -1,4 +1,4 @@
 (function (global) {
 	"use strict";
 
-	var $;
+	var $, events, orgs, repos;

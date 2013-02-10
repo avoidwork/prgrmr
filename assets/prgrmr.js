@@ -13,7 +13,7 @@
 (function (global) {
 	"use strict";
 
-	var $;
+	var $, events, orgs, repos;
 
 /**
  * GitHub API end points
