@@ -19,10 +19,15 @@ module.exports = function (grunt) {
 			src : [
 			  "<banner>",
 			  "src/intro.js",
+			  "src/api.js",
+			  "src/init.js",
 			  "src/outro.js"
 			],
 			dest : "lib/prgrmr.js"
 		  }
+		},
+		min : {
+			"lib/prgrmr.min.js" : ["<banner>", "lib/prgrmr.js"]
 		},
 		test : {
 		  files : ["test/**/*.js"]
@@ -40,5 +45,5 @@ module.exports = function (grunt) {
 	});
 
 	// Concatting, setting version & testing
-	grunt.registerTask("default", "concat version test");
+	grunt.registerTask("default", "concat version min test");
 };
