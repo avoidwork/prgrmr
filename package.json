@@ -1,0 +1,35 @@
+{
+  "name": "prgrmr",
+  "description": "Programmer profile for GitHub projects",
+  "version": "0.1.0",
+  "homepage": "https://github.com/avoidwork/prgrmr",
+  "author": {
+    "name": "Jason Mulligan",
+    "email": "jason.mulligan@avoidwork.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/avoidwork/prgrmr.git"
+  },
+  "bugs": {
+    "url": "https://github.com/avoidwork/prgrmr/issues"
+  },
+  "licenses": [
+    {
+      "type": "BSD-3",
+      "url": "https://raw.github.com/avoidwork/prgrmr/master/LICENSE"
+    }
+  ],
+  "main": "lib/prgrmr",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "devDependencies": {
+    "grunt": "~0.3.17",
+    "turtle.io" : ">= 0.5.0"
+  },
+  "keywords": ["programmer", "profile", "github", "projects", "charts"]
+}
