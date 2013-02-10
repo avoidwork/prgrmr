@@ -20,7 +20,13 @@ module.exports = function (grunt) {
 			  "<banner>",
 			  "src/intro.js",
 			  "src/api.js",
+			  "src/blog.js",
+			  "src/error.js",
+			  "src/events.js",
 			  "src/init.js",
+			  "src/orgs.js",
+			  "src/repos.js",
+			  "src/transform.js",
 			  "src/outro.js"
 			],
 			dest : "assets/prgrmr.js"
