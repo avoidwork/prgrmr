@@ -13,7 +13,7 @@
 (function (global) {
 	"use strict";
 
-	var $, events, orgs, repos;
+	var $, prgrmr = {blog: {}, events: {}, orgs: {}, repos: {}};
 
 /**
  * GitHub API end points
@@ -27,11 +27,22 @@ var api = {
 
 /**
  * Initialization
+ *
+ * Sets up primary DataStores
  * 
  * @return {Undefined} undefined
  */
 var init = function () {
+	// Setting year reference
 	$("#year").html(new Date().getFullYear());
+
+	// Creating DataStores
+	$.iterate(prgrmr, function (v, k) {
+		prgrmr[k] = $.data({id: k}, null, {key: "id"});
+	});
+
+	// Decorating the global namespace with the app structure
+	global.prgrmr = prgrmr;
 };
 
 // Setting internal reference

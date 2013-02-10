@@ -1,4 +1,4 @@
 (function (global) {
 	"use strict";
 
-	var $, events, orgs, repos;
+	var $, prgrmr = {blog: {}, events: {}, orgs: {}, repos: {}};
