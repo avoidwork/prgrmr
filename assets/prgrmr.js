@@ -42,9 +42,10 @@ var error = function (e) {
 /**
  * Sets up a GitHub event DataList
  * 
- * @return {Undefined} undefined
+ * @param  {Array} recs DataStore records
+ * @return {Undefined}  undefined
  */
-var events = function () {
+var events = function (recs) {
 	void 0;
 };
 
@@ -69,8 +70,12 @@ var init = function () {
 		error(e);
 		throw e;
 	}).then(function (arg) {
-		// Config is not filled out
 		if (arg.github.isEmpty()) throw Error($.label.error.invalidArguments);
+		else {
+			$.iterate(api, function (v, k) {
+				api[k] = v.replace("{{user}}", arg.github);
+			});
+		}
 
 		// Creating DataStores
 		$.iterate(prgrmr, function (v, k) {
@@ -84,9 +89,14 @@ var init = function () {
 		throw e;
 	}).then(function (arg) {
 		// Consuming APIs and then executing presentation layer logic
-		prgrmr.events.data.setUri("").then(function (arg) { events(arg); }, function (e) { error(e); });
-		prgrmr.orgs.data.setUri("").then(function (arg) { orgs(arg); }, function (e) { error(e); });
-		prgrmr.repos.data.setUri("").then(function (arg) { repos(arg); }, function (e) { error(e); });
+		prgrmr.events.data.setUri(api.events).then(function (arg) { events(arg); }, function (e) { error(e); });
+		prgrmr.orgs.data.setUri(api.orgs).then(function (arg) { orgs(arg); }, function (e) { error(e); });
+		prgrmr.repos.data.setUri(api.repos).then(function (arg) { repos(arg); }, function (e) { error(e); });
+
+		// Setting expiration for a polling affect (5min)
+		prgrmr.events.setExpires(300);
+		prgrmr.orgs.setExpires(300);
+		prgrmr.repos.setExpires(300);
 
 		// Tumblr consumption is optional
 		if (!arg.tumblr.isEmpty()) prgrmr.blog.data.setUri(arg.tumblr).then(function (arg) { tumblr(arg); }, function (e) { error(e); });
@@ -112,18 +122,20 @@ var log = function (msg, silent) {
 /**
  * Sets up a few DataLists for organizations
  * 
- * @return {Undefined} undefined
+ * @param  {Array} recs DataStore records
+ * @return {Undefined}  undefined
  */
-var orgs = function () {
+var orgs = function (recs) {
 	void 0;
 };
 
 /**
  * Sets up recursive DataStores of repositories
  * 
- * @return {Undefined} undefined
+ * @param  {Array} recs DataStore records
+ * @return {Undefined}  undefined
  */
-var repos = function () {
+var repos = function (recs) {
 	void 0;
 };
 

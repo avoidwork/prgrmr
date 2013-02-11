@@ -1,8 +1,9 @@
 /**
  * Sets up recursive DataStores of repositories
  * 
- * @return {Undefined} undefined
+ * @param  {Array} recs DataStore records
+ * @return {Undefined}  undefined
  */
-var repos = function () {
+var repos = function (recs) {
 	void 0;
 };

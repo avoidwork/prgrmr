@@ -1,8 +1,9 @@
 /**
  * Sets up a few DataLists for organizations
  * 
- * @return {Undefined} undefined
+ * @param  {Array} recs DataStore records
+ * @return {Undefined}  undefined
  */
-var orgs = function () {
+var orgs = function (recs) {
 	void 0;
 };
