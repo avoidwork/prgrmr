@@ -6,15 +6,27 @@
  * @return {Undefined} undefined
  */
 var init = function () {
-	// Setting year reference
-	$("#year").html(new Date().getFullYear());
+	var header  = $("header > h1")[0],
+	    title   = $("title")[0],
+	    version = $("#version"),
+	    year    = $("#year");
 
 	// Setting up humane notifications
 	global.humane.error = global.humane.spawn({addnCls: "humane-jackedup-error", timeout: 3000});
 
+	// Decorating placeholders
+	version.html(prgrmr.version);
+	year.html(new Date().getFullYear());
+	$("header > h1").text()
+
 	// Retrieving the config
 	"assets/config.json".get(function (arg) {
+		// Setting config on namespace
 		prgrmr.config = arg;
+
+		// Decorating placeholders
+		header.html(header.html() + ": " + arg.name);
+		title.html(title.html() + ": " + arg.name);
 	}, function (e) {
 		error(e);
 		throw e;

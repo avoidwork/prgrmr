@@ -1,4 +1,4 @@
 (function (global) {
 "use strict";
 
-var $, prgrmr = {blog: {}, events: {}, orgs: {}, repos: {}, version: "{{VERSION}}"};
+var $, prgrmr = {blog: {}, config: {}, events: {}, orgs: {}, repos: {}, version: "{{VERSION}}"};
