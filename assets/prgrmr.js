@@ -72,6 +72,9 @@ var init = function () {
 
 	// Retrieving the config
 	"assets/config.json".get(function (arg) {
+		// Did you edit config.json?
+		if (arg.github.isEmpty()) throw Error($.label.error.invalidArguments);
+
 		// Setting config on namespace
 		prgrmr.config = arg;
 
@@ -82,12 +85,10 @@ var init = function () {
 		error(e);
 		throw e;
 	}).then(function (arg) {
-		if (arg.github.isEmpty()) throw Error($.label.error.invalidArguments);
-		else {
-			$.iterate(api, function (v, k) {
-				api[k] = v.replace("{{user}}", arg.github);
-			});
-		}
+		// Updating API end points
+		$.iterate(api, function (v, k) {
+			api[k] = v.replace("{{user}}", arg.github);
+		});
 
 		// Creating DataStores
 		$.iterate(prgrmr, function (v, k) {
@@ -113,7 +114,7 @@ var init = function () {
 		// Tumblr consumption is optional
 		if (!arg.tumblr.isEmpty()) prgrmr.blog.data.setUri(arg.tumblr).then(function (arg) { tumblr(arg); }, function (e) { error(e); });
 	}, function (e) {
-		error("Could not consume APIs: " + (e.message || e));
+		error("Could not consume APIs");
 	});
 };
 
