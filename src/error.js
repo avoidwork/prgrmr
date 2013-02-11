@@ -5,6 +5,8 @@
  * @return {Undefined} undefined
  */
 var error = function (e) {
-	$.log(e, "error");
-	// humane notification?
+	var msg = e.message || e;
+
+	$.log(msg, "error");
+	global.humane.error(msg);
 };

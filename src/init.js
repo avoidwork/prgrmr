@@ -9,6 +9,9 @@ var init = function () {
 	// Setting year reference
 	$("#year").html(new Date().getFullYear());
 
+	// Setting up humane notifications
+	global.humane.error = global.humane.spawn({addnCls: "humane-jackedup-error", timeout: 3000});
+
 	// Retrieving the config
 	"assets/config.json".get(function (arg) {
 		prgrmr.config = arg;

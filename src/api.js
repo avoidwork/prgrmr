@@ -4,6 +4,7 @@
  * @type {Object}
  */
 var api = {
-	events   : "/",
-	projects : "/"
+	events : "https://api.github.com/users/{{user}}/events",
+	orgs   : "https://api.github.com/users/{{user}}/orgs",
+	repos  : "https://api.github.com/users/{{user}}/repos"
 };

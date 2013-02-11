@@ -21,8 +21,9 @@
  * @type {Object}
  */
 var api = {
-	events   : "/",
-	projects : "/"
+	events : "https://api.github.com/users/{{user}}/events",
+	orgs   : "https://api.github.com/users/{{user}}/orgs",
+	repos  : "https://api.github.com/users/{{user}}/repos"
 };
 
 /**
@@ -32,8 +33,10 @@ var api = {
  * @return {Undefined} undefined
  */
 var error = function (e) {
-	$.log(e, "error");
-	// humane notification?
+	var msg = e.message || e;
+
+	$.log(msg, "error");
+	global.humane.error(msg);
 };
 
 /**
@@ -55,6 +58,9 @@ var events = function () {
 var init = function () {
 	// Setting year reference
 	$("#year").html(new Date().getFullYear());
+
+	// Setting up humane notifications
+	global.humane.error = global.humane.spawn({addnCls: "humane-jackedup-error", timeout: 3000});
 
 	// Retrieving the config
 	"assets/config.json".get(function (arg) {
@@ -87,6 +93,20 @@ var init = function () {
 	}, function (e) {
 		error("Could not consume APIs: " + (e.message || e));
 	});
+};
+
+/**
+ * Logs a message
+ * 
+ * @param  {String}  msg    Message to notify
+ * @param  {Boolean} silent Boolean indicating if the user should be notified
+ * @return {Undefined}      undefined
+ */
+var log = function (msg, silent) {
+	silent = (silent === true);
+
+	$.log(msg);
+	if (!silent) humane.log(msg);
 };
 
 /**
