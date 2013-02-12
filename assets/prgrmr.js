@@ -70,7 +70,6 @@ var init = function () {
 	// Decorating placeholders
 	version.html(prgrmr.version);
 	year.html(new Date().getFullYear());
-	$("header > h1").text()
 
 	// Adding a spinner
 	loading = spinner(main, "large");
@@ -84,8 +83,8 @@ var init = function () {
 		prgrmr.config = arg;
 
 		// Decorating placeholders
-		header.html(header.html() + ": " + arg.name);
-		title.html(title.html() + ": " + arg.name);
+		header.html(arg.name);
+		title.html(arg.name);
 	}, function (e) {
 		error(e);
 		throw e;
