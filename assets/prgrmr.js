@@ -60,7 +60,9 @@ var init = function () {
 	var header  = $("header > h1")[0],
 	    title   = $("title")[0],
 	    version = $("#version"),
-	    year    = $("#year");
+	    year    = $("#year"),
+	    main    = $("article")[0],
+	    loading;
 
 	// Setting up humane notifications
 	global.humane.error = global.humane.spawn({addnCls: "humane-jackedup-error", timeout: 3000});
@@ -69,6 +71,9 @@ var init = function () {
 	version.html(prgrmr.version);
 	year.html(new Date().getFullYear());
 	$("header > h1").text()
+
+	// Adding a spinner
+	loading = spinner(main, "large");
 
 	// Retrieving the config
 	"assets/config.json".get(function (arg) {
@@ -102,9 +107,29 @@ var init = function () {
 		throw e;
 	}).then(function (arg) {
 		// Consuming APIs and then executing presentation layer logic
-		prgrmr.events.data.setUri(api.events).then(function (arg) { events(arg); }, function (e) { error(e); });
-		prgrmr.orgs.data.setUri(api.orgs).then(function (arg) { orgs(arg); }, function (e) { error(e); });
-		prgrmr.repos.data.setUri(api.repos).then(function (arg) { repos(arg); }, function (e) { error(e); });
+		prgrmr.events.data.setUri(api.events).then(function (arg) {
+			loading.el.destroy();
+			events(arg);
+		}, function (e) {
+			loading.el.destroy();
+			error(e);
+		});
+
+		prgrmr.orgs.data.setUri(api.orgs).then(function (arg) {
+			loading.el.destroy();
+			orgs(arg);
+		}, function (e) {
+			loading.el.destroy();
+			error(e);
+		});
+
+		prgrmr.repos.data.setUri(api.repos).then(function (arg) {
+			loading.el.destroy();
+			repos(arg);
+		}, function (e) {
+			loading.el.destroy();
+			error(e);
+		});
 
 		// Setting expiration for a polling affect (5min)
 		prgrmr.events.setExpires(300);
@@ -150,6 +175,59 @@ var orgs = function (recs) {
  */
 var repos = function (recs) {
 	void 0;
+};
+
+/**
+ * Creates a spinner inside an Element
+ * 
+ * @param  {Object} obj Element receiving the spinner
+ * @return {Object}     Spinner
+ */
+var spinner = function (obj, size) {
+	obj  = $.object(obj);
+	size = size || "small"
+	var spinner, opts;
+
+	opts = {
+		lines     : 13,
+		length    : 5,
+		width     : 2,
+		radius    : 5,
+		corners   : 1,
+		rotate    : 0,
+		color     : "#000",
+		speed     : 1,
+		trail     : 70,
+		shadow    : true,
+		hwaccel   : true,
+		className : "spinner",
+		zIndex    : 2e9,
+		top       : "auto",
+		left      : "auto"
+	}
+
+	switch (size) {
+		case "small":
+			opts.length = 4;
+			opts.radius = 4;
+			opts.width  = 2;
+			break;
+		case "medium":
+			opts.length = 7;
+			opts.radius = 7;
+			opts.width  = 3;
+			break;
+		case "large":
+		default:
+			opts.length = 12;
+			opts.radius = 12;
+			opts.width  = 3;
+			break;
+	}
+
+	spinner = new Spinner(opts).spin(obj);
+
+	return spinner;
 };
 
 /**

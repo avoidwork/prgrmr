@@ -9,7 +9,9 @@ var init = function () {
 	var header  = $("header > h1")[0],
 	    title   = $("title")[0],
 	    version = $("#version"),
-	    year    = $("#year");
+	    year    = $("#year"),
+	    main    = $("article")[0],
+	    loading;
 
 	// Setting up humane notifications
 	global.humane.error = global.humane.spawn({addnCls: "humane-jackedup-error", timeout: 3000});
@@ -18,6 +20,9 @@ var init = function () {
 	version.html(prgrmr.version);
 	year.html(new Date().getFullYear());
 	$("header > h1").text()
+
+	// Adding a spinner
+	loading = spinner(main, "large");
 
 	// Retrieving the config
 	"assets/config.json".get(function (arg) {
@@ -51,9 +56,29 @@ var init = function () {
 		throw e;
 	}).then(function (arg) {
 		// Consuming APIs and then executing presentation layer logic
-		prgrmr.events.data.setUri(api.events).then(function (arg) { events(arg); }, function (e) { error(e); });
-		prgrmr.orgs.data.setUri(api.orgs).then(function (arg) { orgs(arg); }, function (e) { error(e); });
-		prgrmr.repos.data.setUri(api.repos).then(function (arg) { repos(arg); }, function (e) { error(e); });
+		prgrmr.events.data.setUri(api.events).then(function (arg) {
+			loading.el.destroy();
+			events(arg);
+		}, function (e) {
+			loading.el.destroy();
+			error(e);
+		});
+
+		prgrmr.orgs.data.setUri(api.orgs).then(function (arg) {
+			loading.el.destroy();
+			orgs(arg);
+		}, function (e) {
+			loading.el.destroy();
+			error(e);
+		});
+
+		prgrmr.repos.data.setUri(api.repos).then(function (arg) {
+			loading.el.destroy();
+			repos(arg);
+		}, function (e) {
+			loading.el.destroy();
+			error(e);
+		});
 
 		// Setting expiration for a polling affect (5min)
 		prgrmr.events.setExpires(300);

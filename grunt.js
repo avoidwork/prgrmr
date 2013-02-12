@@ -27,6 +27,7 @@ module.exports = function (grunt) {
 			  "src/log.js",
 			  "src/orgs.js",
 			  "src/repos.js",
+			  "src/spinner.js",
 			  "src/transform.js",
 			  "src/outro.js"
 			],
