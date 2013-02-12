@@ -9,7 +9,6 @@ var init = function () {
 	var header  = $("header > h1")[0],
 	    title   = $("title")[0],
 	    version = $("#version"),
-	    year    = $("#year"),
 	    main    = $("article")[0],
 	    loading;
 
@@ -17,8 +16,7 @@ var init = function () {
 	global.humane.error = global.humane.spawn({addnCls: "humane-jackedup-error", timeout: 3000});
 
 	// Decorating placeholders
-	version.html(prgrmr.version);
-	year.html(new Date().getFullYear());
+	if (version !== "undefined") version.html(prgrmr.version);
 
 	// Adding a spinner
 	loading = spinner(main, "large");
