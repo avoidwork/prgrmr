@@ -5,5 +5,16 @@
  * @return {Undefined}  undefined
  */
 var repos = function (recs) {
-	void 0;
+	var obj = $("#repos"),
+	    callback;
+
+	callback = function (arg) {
+		void 0;
+	};
+
+	prgrmr.repos.datalist = $.datalist(obj, prgrmr.repos.data, "{{id}}", callback);
+
+	obj.removeClass("hidden");
+
+	charts("repos");
 };

@@ -27,6 +27,18 @@ var api = {
 };
 
 /**
+ * Renders charts
+ * 
+ * @param  {String} type Type of chart to render
+ * @return {Undefined}   undefined
+ */
+var charts = function (type) {
+	var obj = $("#charts");
+
+	obj.removeClass("hidden");
+};
+
+/**
  * Error handler
  * 
  * @param  {Mixed} e Object or String
@@ -46,7 +58,18 @@ var error = function (e) {
  * @return {Undefined}  undefined
  */
 var events = function (recs) {
-	void 0;
+	var obj = $("#events"),
+	    callback;
+
+	callback = function (arg) {
+		void 0;
+	};
+
+	prgrmr.events.datalist = $.datalist(obj, prgrmr.events.data, "{{id}}", callback);
+
+	obj.removeClass("hidden");
+
+	charts("events");
 };
 
 /**
@@ -161,7 +184,18 @@ var log = function (msg, silent) {
  * @return {Undefined}  undefined
  */
 var orgs = function (recs) {
-	void 0;
+	var obj = $("#orgs"),
+	    callback;
+
+	callback = function (arg) {
+		void 0;
+	};
+
+	prgrmr.orgs.datalist = $.datalist(obj, prgrmr.orgs.data, "{{id}}", callback);
+
+	obj.removeClass("hidden");
+
+	charts("orgs");
 };
 
 /**
@@ -171,7 +205,18 @@ var orgs = function (recs) {
  * @return {Undefined}  undefined
  */
 var repos = function (recs) {
-	void 0;
+	var obj = $("#repos"),
+	    callback;
+
+	callback = function (arg) {
+		void 0;
+	};
+
+	prgrmr.repos.datalist = $.datalist(obj, prgrmr.repos.data, "{{id}}", callback);
+
+	obj.removeClass("hidden");
+
+	charts("repos");
 };
 
 /**

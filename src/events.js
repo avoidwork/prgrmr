@@ -5,5 +5,16 @@
  * @return {Undefined}  undefined
  */
 var events = function (recs) {
-	void 0;
+	var obj = $("#events"),
+	    callback;
+
+	callback = function (arg) {
+		void 0;
+	};
+
+	prgrmr.events.datalist = $.datalist(obj, prgrmr.events.data, "{{id}}", callback);
+
+	obj.removeClass("hidden");
+
+	charts("events");
 };
