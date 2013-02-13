@@ -1,10 +1,9 @@
 /**
  * Sets up recursive DataStores of repositories
  * 
- * @param  {Array} recs DataStore records
- * @return {Undefined}  undefined
+ * @return {Undefined} undefined
  */
-var repos = function (recs) {
+var repos = function () {
 	var obj = $("#repos"),
 	    callback;
 
@@ -12,9 +11,7 @@ var repos = function (recs) {
 		void 0;
 	};
 
-	prgrmr.repos.datalist = $.datalist(obj, prgrmr.repos.data, "{{id}}", callback);
-
+	prgrmr.repos.datalist = $.datalist(obj, prgrmr.repos.data, prgrmr.templates.repos, callback);
 	obj.removeClass("hidden");
-
 	charts("repos");
 };

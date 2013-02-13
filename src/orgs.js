@@ -1,10 +1,9 @@
 /**
  * Sets up a few DataLists for organizations
  * 
- * @param  {Array} recs DataStore records
- * @return {Undefined}  undefined
+ * @return {Undefined} undefined
  */
-var orgs = function (recs) {
+var orgs = function () {
 	var obj = $("#orgs"),
 	    callback;
 

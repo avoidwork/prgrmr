@@ -1,10 +1,9 @@
 /**
  * Sets up a GitHub event DataList
  * 
- * @param  {Array} recs DataStore records
- * @return {Undefined}  undefined
+ * @return {Undefined} undefined
  */
-var events = function (recs) {
+var events = function () {
 	var obj = $("#events"),
 	    callback;
 

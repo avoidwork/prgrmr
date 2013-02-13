@@ -13,7 +13,7 @@
 (function (global) {
 "use strict";
 
-var $, prgrmr = {blog: {}, config: {}, events: {}, orgs: {}, repos: {}, version: "0.1.0"};
+var $, prgrmr = {blog: {}, config: {}, events: {}, orgs: {}, repos: {}, templates: {}, version: "0.1.0"};
 
 /**
  * GitHub API end points
@@ -54,10 +54,9 @@ var error = function (e) {
 /**
  * Sets up a GitHub event DataList
  * 
- * @param  {Array} recs DataStore records
- * @return {Undefined}  undefined
+ * @return {Undefined} undefined
  */
-var events = function (recs) {
+var events = function () {
 	var obj = $("#events"),
 	    callback;
 
@@ -127,34 +126,41 @@ var init = function () {
 		throw e;
 	}).then(function (arg) {
 		// Consuming APIs and then executing presentation layer logic
-		prgrmr.events.data.setUri(api.events).then(function (arg) {
-			loading.el.destroy();
-			events(arg);
+		prgrmr.events.data.setUri(api.events).then(function () {
+			"templates/events.html".get(function (arg) {
+				prgrmr.templates.events = arg;
+				loading.el.destroy();
+				events();
+				prgrmr.events.setExpires(300);
+			});
 		}, function (e) {
 			loading.el.destroy();
 			error(e);
 		});
 
-		prgrmr.orgs.data.setUri(api.orgs).then(function (arg) {
-			loading.el.destroy();
-			orgs(arg);
+		prgrmr.orgs.data.setUri(api.orgs).then(function () {
+			"templates/orgs.html".get(function (arg) {
+				prgrmr.templates.orgs = arg;
+				loading.el.destroy();
+				orgs();
+				prgrmr.repos.setExpires(300);
+			});
 		}, function (e) {
 			loading.el.destroy();
 			error(e);
 		});
 
-		prgrmr.repos.data.setUri(api.repos).then(function (arg) {
-			loading.el.destroy();
-			repos(arg);
+		prgrmr.repos.data.setUri(api.repos).then(function () {
+			"templates/repos.html".get(function (arg) {
+				prgrmr.templates.repos = arg;
+				loading.el.destroy();
+				repos();
+				prgrmr.repos.setExpires(300);
+			});
 		}, function (e) {
 			loading.el.destroy();
 			error(e);
 		});
-
-		// Setting expiration for a polling affect (5min)
-		prgrmr.events.setExpires(300);
-		prgrmr.orgs.setExpires(300);
-		prgrmr.repos.setExpires(300);
 
 		// Tumblr consumption is optional
 		if (!arg.tumblr.isEmpty()) prgrmr.blog.data.setUri(arg.tumblr).then(function (arg) { tumblr(arg); }, function (e) { error(e); });
@@ -180,10 +186,9 @@ var log = function (msg, silent) {
 /**
  * Sets up a few DataLists for organizations
  * 
- * @param  {Array} recs DataStore records
- * @return {Undefined}  undefined
+ * @return {Undefined} undefined
  */
-var orgs = function (recs) {
+var orgs = function () {
 	var obj = $("#orgs"),
 	    callback;
 
@@ -201,10 +206,9 @@ var orgs = function (recs) {
 /**
  * Sets up recursive DataStores of repositories
  * 
- * @param  {Array} recs DataStore records
- * @return {Undefined}  undefined
+ * @return {Undefined} undefined
  */
-var repos = function (recs) {
+var repos = function () {
 	var obj = $("#repos"),
 	    callback;
 
@@ -212,10 +216,8 @@ var repos = function (recs) {
 		void 0;
 	};
 
-	prgrmr.repos.datalist = $.datalist(obj, prgrmr.repos.data, "{{id}}", callback);
-
+	prgrmr.repos.datalist = $.datalist(obj, prgrmr.repos.data, prgrmr.templates.repos, callback);
 	obj.removeClass("hidden");
-
 	charts("repos");
 };
 
