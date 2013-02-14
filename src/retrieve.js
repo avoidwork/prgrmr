@@ -32,4 +32,4 @@ var retrieve = function (arg, loading) {
 	});
 
 	return deferred;
-}
+};
