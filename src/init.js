@@ -43,7 +43,7 @@ var init = function () {
 
 		// Creating DataStores
 		$.iterate(prgrmr, function (v, k) {
-			this[k] = $.data({id: k}, null, {key: "id"});
+			this[k] = $.data({id: k}, null, {key: "id", events: false});
 		});
 
 		// Decorating the global namespace with application
@@ -52,45 +52,9 @@ var init = function () {
 		error("Configuration is not valid: " + (e.message || e));
 		throw e;
 	}).then(function (arg) {
-		// Consuming APIs and then executing presentation layer logic
-		prgrmr.events.data.setUri(api.events).then(function () {
-			"templates/events.html".get(function (arg) {
-				prgrmr.templates.events = arg;
-				loading.el.destroy();
-				events();
-				prgrmr.events.setExpires(300);
-			});
-		}, function (e) {
-			loading.el.destroy();
-			error(e);
-		});
-
-		prgrmr.orgs.data.setUri(api.orgs).then(function () {
-			"templates/orgs.html".get(function (arg) {
-				prgrmr.templates.orgs = arg;
-				loading.el.destroy();
-				orgs();
-				prgrmr.repos.setExpires(300);
-			});
-		}, function (e) {
-			loading.el.destroy();
-			error(e);
-		});
-
-		prgrmr.repos.data.setUri(api.repos).then(function () {
-			"templates/repos.html".get(function (arg) {
-				prgrmr.templates.repos = arg;
-				loading.el.destroy();
-				repos();
-				prgrmr.repos.setExpires(300);
-			});
-		}, function (e) {
-			loading.el.destroy();
-			error(e);
-		});
-
-		// Tumblr consumption is optional
-		if (!arg.tumblr.isEmpty()) prgrmr.blog.data.setUri(arg.tumblr).then(function (arg) { tumblr(arg); }, function (e) { error(e); });
+		retrieve("events", loading);
+		retrieve("orgs", loading);
+		retrieve("repos", loading);
 	}, function (e) {
 		error("Could not consume APIs");
 	});

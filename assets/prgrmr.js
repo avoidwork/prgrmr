@@ -52,26 +52,6 @@ var error = function (e) {
 };
 
 /**
- * Sets up a GitHub event DataList
- * 
- * @return {Undefined} undefined
- */
-var events = function () {
-	var obj = $("#events"),
-	    callback;
-
-	callback = function (arg) {
-		void 0;
-	};
-
-	prgrmr.events.datalist = $.datalist(obj, prgrmr.events.data, "{{id}}", callback);
-
-	obj.removeClass("hidden");
-
-	charts("events");
-};
-
-/**
  * Initialization
  *
  * Sets up primary DataStores
@@ -116,7 +96,7 @@ var init = function () {
 
 		// Creating DataStores
 		$.iterate(prgrmr, function (v, k) {
-			this[k] = $.data({id: k}, null, {key: "id"});
+			this[k] = $.data({id: k}, null, {key: "id", events: false});
 		});
 
 		// Decorating the global namespace with application
@@ -125,45 +105,9 @@ var init = function () {
 		error("Configuration is not valid: " + (e.message || e));
 		throw e;
 	}).then(function (arg) {
-		// Consuming APIs and then executing presentation layer logic
-		prgrmr.events.data.setUri(api.events).then(function () {
-			"templates/events.html".get(function (arg) {
-				prgrmr.templates.events = arg;
-				loading.el.destroy();
-				events();
-				prgrmr.events.setExpires(300);
-			});
-		}, function (e) {
-			loading.el.destroy();
-			error(e);
-		});
-
-		prgrmr.orgs.data.setUri(api.orgs).then(function () {
-			"templates/orgs.html".get(function (arg) {
-				prgrmr.templates.orgs = arg;
-				loading.el.destroy();
-				orgs();
-				prgrmr.repos.setExpires(300);
-			});
-		}, function (e) {
-			loading.el.destroy();
-			error(e);
-		});
-
-		prgrmr.repos.data.setUri(api.repos).then(function () {
-			"templates/repos.html".get(function (arg) {
-				prgrmr.templates.repos = arg;
-				loading.el.destroy();
-				repos();
-				prgrmr.repos.setExpires(300);
-			});
-		}, function (e) {
-			loading.el.destroy();
-			error(e);
-		});
-
-		// Tumblr consumption is optional
-		if (!arg.tumblr.isEmpty()) prgrmr.blog.data.setUri(arg.tumblr).then(function (arg) { tumblr(arg); }, function (e) { error(e); });
+		retrieve("events", loading);
+		retrieve("orgs", loading);
+		retrieve("repos", loading);
 	}, function (e) {
 		error("Could not consume APIs");
 	});
@@ -184,43 +128,58 @@ var log = function (msg, silent) {
 };
 
 /**
- * Sets up a few DataLists for organizations
+ * Renders a DataList
  * 
  * @return {Undefined} undefined
  */
-var orgs = function () {
-	var obj = $("#orgs"),
+var render = function (arg) {
+	var obj = $("#" + arg),
 	    callback;
 
-	callback = function (arg) {
+	callback = function (e) {
 		void 0;
 	};
 
-	prgrmr.orgs.datalist = $.datalist(obj, prgrmr.orgs.data, "{{id}}", callback);
-
+	prgrmr[arg].datalist = $.datalist(obj, prgrmr[arg].data, prgrmr.templates[arg], callback);
 	obj.removeClass("hidden");
-
-	charts("orgs");
+	charts(arg);
 };
 
 /**
- * Sets up recursive DataStores of repositories
+ * Consuming APIs and then executing presentation layer logic
  * 
- * @return {Undefined} undefined
+ * @param  {String} arg     API to retrieve
+ * @param  {Object} loading Spinner instance
+ * @return {Object}         Promise
  */
-var repos = function () {
-	var obj = $("#repos"),
-	    callback;
+var retrieve = function (arg, loading) {
+	var deferred = $.promise();
 
-	callback = function (arg) {
-		void 0;
-	};
+	prgrmr[arg].data.setUri(api[arg]).then(function () {
+		("templates/" + arg + ".html").get(function (tpl) {
+			prgrmr.templates[arg] = tpl;
+			if (loading !== null) {
+				loading.el.destroy();
+				loading = null;
+			}
+			render(arg);
+			prgrmr[arg].setExpires(300);
+			deferred.resolve(true);
+		}, function (e) {
+			deferred.reject(e);
+			error(e);
+		});
+	}, function (e) {
+		if (loading !== null) {
+			loading.el.destroy();
+			loading = null;
+		}
+		deferred.reject(e);
+		error(e);
+	});
 
-	prgrmr.repos.datalist = $.datalist(obj, prgrmr.repos.data, prgrmr.templates.repos, callback);
-	obj.removeClass("hidden");
-	charts("repos");
-};
-
+	return deferred;
+}
 /**
  * Creates a spinner inside an Element
  * 
@@ -269,9 +228,7 @@ var spinner = function (obj, size) {
 			break;
 	}
 
-	spinner = new Spinner(opts).spin(obj);
-
-	return spinner;
+	return new Spinner(opts).spin(obj);
 };
 
 /**

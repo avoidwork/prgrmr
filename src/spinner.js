@@ -46,7 +46,5 @@ var spinner = function (obj, size) {
 			break;
 	}
 
-	spinner = new Spinner(opts).spin(obj);
-
-	return spinner;
+	return new Spinner(opts).spin(obj);
 };
