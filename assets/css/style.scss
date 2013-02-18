@@ -65,16 +65,10 @@ h6 {
 }
 
 .chart {
-	width: 500px;
-	height: 500px;
+	width: 400px;
+	height: 400px;
 	margin: 0 $spacer $spacer 0;
-	display: inline-block;
-	//float: left;
-
-	> svg {
-		width: 500px;
-		height: 500px;
-	}
+	float: left;
 }
 
 .col {
@@ -97,7 +91,7 @@ h6 {
 }
 
 #charts {
-	//display: inline-block;
+	display: block;
 }
 
 #contact {

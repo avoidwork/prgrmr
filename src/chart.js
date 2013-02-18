@@ -16,9 +16,6 @@ var chart = function (type, title, data) {
 
 	switch (type) {
 		case "pie":
-			var width = 500,
-			    height = 500;
-
 			arg = function () {
 				var obj = nv.models.pieChart()
 				            .x(function (d) {
@@ -30,15 +27,11 @@ var chart = function (type, title, data) {
 				            .values(function (d) {
 				            	return d;
 				            })
-				            .showLabels(false)
-				            .width(width)
-				            .height(height);
+				            .showLabels(false);
 
 				d3.select("#" + id)
 				  .datum(data)
 				  .transition().duration(1200)
-				  .attr("width", width)
-				  .attr("height", height)
 				  .call(obj);
 
 				return obj;
