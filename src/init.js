@@ -57,7 +57,7 @@ var init = function () {
 
 		// Creating DataStores
 		$.iterate(prgrmr, function (v, k) {
-			this[k] = $.data({id: k}, null, {key: "id", events: false});
+			this[k] = $.data({id: k}, null, {key: "id", events: false, callback: "callback", source: "data"});
 		});
 
 		// Decorating the global namespace with application

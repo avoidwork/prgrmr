@@ -1,7 +1,7 @@
 /**
  * prgrmr
  *
- * Programmer profile for GitHub projects
+ * Single page JavaScript dashboard of a Programmer's activity on GitHub
  *
  * @author Jason Mulligan <jason.mulligan@avoidwork.com>
  * @copyright 2013 Jason Mulligan
@@ -24,9 +24,9 @@ var $,
  * @type {Object}
  */
 var api = {
-	events : "https://api.github.com/users/{{user}}/events",
-	orgs   : "https://api.github.com/users/{{user}}/orgs",
-	repos  : "https://api.github.com/users/{{user}}/repos"
+	events : "https://api.github.com/users/{{user}}/events?callback=?",
+	orgs   : "https://api.github.com/users/{{user}}/orgs?callback=?",
+	repos  : "https://api.github.com/users/{{user}}/repos?callback=?"
 };
 
 /**
@@ -151,7 +151,7 @@ var init = function () {
 
 		// Creating DataStores
 		$.iterate(prgrmr, function (v, k) {
-			this[k] = $.data({id: k}, null, {key: "id", events: false});
+			this[k] = $.data({id: k}, null, {key: "id", events: false, callback: "callback", source: "data"});
 		});
 
 		// Decorating the global namespace with application
