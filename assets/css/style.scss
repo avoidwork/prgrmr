@@ -56,6 +56,14 @@ h6 {
 	padding: 0;
 }
 
+.banner {
+	position: absolute;
+	top: 0;
+	right: 0;
+	z-index: 99;
+	margin: 0;
+}
+
 .col {
 	float: left;
 	width: 400px;
@@ -64,14 +72,6 @@ h6 {
 	.icon {
 		font-size: ($fontsize / 2);
 	}
-}
-
-.github {
-	position: absolute;
-	top: 0;
-	right: 0;
-	z-index: 99;
-	margin: 0;
 }
 
 .hidden {
@@ -91,6 +91,24 @@ h6 {
 	li {
 		display: inline-block;
 		margin: 0 0 0 0;
+
+		a {
+			&.blog:hover {
+				color: #FF8100;
+			}
+
+			&.email:hover {
+				color: #A60000;
+			}
+
+			&.github:hover {
+				color: #ccc;
+			}
+
+			&.twitter:hover {
+				color: #086FA1;
+			}
+		}
 	}
 }
 
