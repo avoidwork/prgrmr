@@ -38,29 +38,35 @@ var chart = function (type, title, data) {
 	    id  = $.genId(true),
 	    arg, section;
 
-	section = obj.removeClass("hidden").append("section", {"class": "chart"});
+	section = obj.removeClass("hidden").append("div", {"class": "chart"});
 	section.append("h2").text(title);
 	section.append("svg", {id: id});
 
 	switch (type) {
 		case "pie":
+			var width = 500,
+			    height = 500;
+
 			arg = function () {
 				var obj = nv.models.pieChart()
 				            .x(function (d) {
-				            	return d.label;
+				            	return d.key;
 				             })
 				            .y(function (d) {
-				            	return d.value;
+				            	return d.y;
 				             })
 				            .values(function (d) {
 				            	return d;
 				            })
-				            .showLabels(false);
+				            .showLabels(false)
+				            .width(width)
+				            .height(height);
 
 				d3.select("#" + id)
 				  .datum(data)
-				  .transition()
-				  .duration(1200)
+				  .transition().duration(1200)
+				  .attr("width", width)
+				  .attr("height", height)
 				  .call(obj);
 
 				return obj;
@@ -88,8 +94,7 @@ var chart = function (type, title, data) {
 
 				d3.select("#" + id)
 				  .datum(data)
-				  .transition()
-				  .duration(500)
+				  .transition().duration(500)
 				  .call(obj);
 
 				nv.utils.windowResize(obj.update);
@@ -253,10 +258,12 @@ var render = function (arg) {
 	
 	switch (arg) {
 		case "events":
-			chart("pie", "Types of Commits", transform("pie", prgrmr[arg].data.get(), {total: "type", type: arg}));
+			chart("pie", "Types of Commits", transform("pie", prgrmr[arg].data.get(), arg));
 			break;
 		case "orgs":
+			break;
 		case "repos":
+			chart("pie", "Types of Repositories", transform("pie", prgrmr[arg].data.get(), arg));
 			break;
 	}
 };
@@ -355,7 +362,7 @@ var spinner = function (obj, size) {
  * @param  {Object} data Data to transform
  * @return {Array}       NVD3 chart data
  */
-var transform = function (type, data, args) {
+var transform = function (chartType, data, type) {
 	var result     = [],
 	    epochs     = [],
 	    types      = [],
@@ -366,18 +373,33 @@ var transform = function (type, data, args) {
 	    tmp        = {},
 	    total      = 0;
 
-	switch (type) {
+	switch (chartType) {
 		case "pie":
-			if (args.type === "events") {
+			if (type === "events") {
 				data.forEach(function (i) {
-					tmp[i.data.type] = tmp[i.data.type] + 1 || 0;
+					tmp[i.data.type] = tmp[i.data.type] + 1 || 1;
 					total++;
 				});
 
 				$.iterate(tmp, function (v, k) {
 					series.push({
-						label : k.replace("Event", "").replace(/([A-Z])/g, " $1").trim(),
-						value : ((v / total) * 100)
+						key : k.replace("Event", "").replace(/([A-Z])/g, " $1").trim(),
+						y   : ((v / total) * 100)
+					});
+				});
+			}
+			else if (type === "repos") {
+				data.forEach(function (i) {
+					var label = i.data.fork ? "Forked" : "Authored";
+
+					tmp[label] = tmp[label] + 1 || 1;
+					total++;
+				});
+
+				$.iterate(tmp, function (v, k) {
+					series.push({
+						key : k,
+						y   : ((v / total) * 100)
 					});
 				});
 			}

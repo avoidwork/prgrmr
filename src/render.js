@@ -43,10 +43,12 @@ var render = function (arg) {
 	
 	switch (arg) {
 		case "events":
-			chart("pie", "Types of Commits", transform("pie", prgrmr[arg].data.get(), {total: "type", type: arg}));
+			chart("pie", "Types of Commits", transform("pie", prgrmr[arg].data.get(), arg));
 			break;
 		case "orgs":
+			break;
 		case "repos":
+			chart("pie", "Types of Repositories", transform("pie", prgrmr[arg].data.get(), arg));
 			break;
 	}
 };

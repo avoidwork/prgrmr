@@ -10,29 +10,35 @@ var chart = function (type, title, data) {
 	    id  = $.genId(true),
 	    arg, section;
 
-	section = obj.removeClass("hidden").append("section", {"class": "chart"});
+	section = obj.removeClass("hidden").append("div", {"class": "chart"});
 	section.append("h2").text(title);
 	section.append("svg", {id: id});
 
 	switch (type) {
 		case "pie":
+			var width = 500,
+			    height = 500;
+
 			arg = function () {
 				var obj = nv.models.pieChart()
 				            .x(function (d) {
-				            	return d.label;
+				            	return d.key;
 				             })
 				            .y(function (d) {
-				            	return d.value;
+				            	return d.y;
 				             })
 				            .values(function (d) {
 				            	return d;
 				            })
-				            .showLabels(false);
+				            .showLabels(false)
+				            .width(width)
+				            .height(height);
 
 				d3.select("#" + id)
 				  .datum(data)
-				  .transition()
-				  .duration(1200)
+				  .transition().duration(1200)
+				  .attr("width", width)
+				  .attr("height", height)
 				  .call(obj);
 
 				return obj;
@@ -60,8 +66,7 @@ var chart = function (type, title, data) {
 
 				d3.select("#" + id)
 				  .datum(data)
-				  .transition()
-				  .duration(500)
+				  .transition().duration(500)
 				  .call(obj);
 
 				nv.utils.windowResize(obj.update);

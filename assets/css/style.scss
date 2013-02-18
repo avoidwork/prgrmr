@@ -67,8 +67,14 @@ h6 {
 .chart {
 	width: 500px;
 	height: 500px;
-//	margin: 0 $spacer $spacer 0;
-//	float: left;
+	margin: 0 $spacer $spacer 0;
+	display: inline-block;
+	//float: left;
+
+	> svg {
+		width: 500px;
+		height: 500px;
+	}
 }
 
 .col {

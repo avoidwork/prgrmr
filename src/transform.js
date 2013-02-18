@@ -5,7 +5,7 @@
  * @param  {Object} data Data to transform
  * @return {Array}       NVD3 chart data
  */
-var transform = function (type, data, args) {
+var transform = function (chartType, data, type) {
 	var result     = [],
 	    epochs     = [],
 	    types      = [],
@@ -16,18 +16,33 @@ var transform = function (type, data, args) {
 	    tmp        = {},
 	    total      = 0;
 
-	switch (type) {
+	switch (chartType) {
 		case "pie":
-			if (args.type === "events") {
+			if (type === "events") {
 				data.forEach(function (i) {
-					tmp[i.data.type] = tmp[i.data.type] + 1 || 0;
+					tmp[i.data.type] = tmp[i.data.type] + 1 || 1;
 					total++;
 				});
 
 				$.iterate(tmp, function (v, k) {
 					series.push({
-						label : k.replace("Event", "").replace(/([A-Z])/g, " $1").trim(),
-						value : ((v / total) * 100)
+						key : k.replace("Event", "").replace(/([A-Z])/g, " $1").trim(),
+						y   : ((v / total) * 100)
+					});
+				});
+			}
+			else if (type === "repos") {
+				data.forEach(function (i) {
+					var label = i.data.fork ? "Forked" : "Authored";
+
+					tmp[label] = tmp[label] + 1 || 1;
+					total++;
+				});
+
+				$.iterate(tmp, function (v, k) {
+					series.push({
+						key : k,
+						y   : ((v / total) * 100)
 					});
 				});
 			}
