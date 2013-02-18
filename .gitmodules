@@ -1,8 +1,8 @@
 [submodule "nvd3"]
-	path = nvd3
+	path = assets/nvd3
 	url = git://github.com/novus/nvd3.git
 [submodule "humane"]
-	path = humane
+	path = assets/humane
 	url = git://github.com/wavded/humane-js.git
 [submodule "assets/font-awesome"]
 	path = assets/font-awesome
