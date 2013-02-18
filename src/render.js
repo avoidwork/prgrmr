@@ -40,5 +40,13 @@ var render = function (arg) {
 
 	prgrmr[arg].datalist = $.datalist(obj, prgrmr[arg].data, prgrmr.templates[arg], {callback: callback});
 	obj.removeClass("hidden");
-	charts(arg);
+	
+	switch (arg) {
+		case "events":
+			chart("pie", "Types of Commits", transform("pie", prgrmr[arg].data.get(), {total: "type", type: arg}));
+			break;
+		case "orgs":
+		case "repos":
+			break;
+	}
 };

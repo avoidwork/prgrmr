@@ -64,6 +64,13 @@ h6 {
 	margin: 0;
 }
 
+.chart {
+	width: 500px;
+	height: 500px;
+//	margin: 0 $spacer $spacer 0;
+//	float: left;
+}
+
 .col {
 	float: left;
 	width: 400px;
@@ -81,6 +88,10 @@ h6 {
 .repo {
 	display: inline-block;
 	width: 200px;
+}
+
+#charts {
+	//display: inline-block;
 }
 
 #contact {

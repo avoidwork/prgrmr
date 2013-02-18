@@ -3,16 +3,47 @@
  * 
  * @param  {String} type Type of chart
  * @param  {Object} data Data to transform
- * @return {Object}      Promise
+ * @return {Array}       NVD3 chart data
  */
-var transform = function (type, data) {
-	var deferred = $.promise();
+var transform = function (type, data, args) {
+	var result     = [],
+	    epochs     = [],
+	    types      = [],
+	    categories = [],
+	    series     = [],
+	    records    = {},
+	    pie        = [],
+	    tmp        = {},
+	    total      = 0;
 
-	utility.defer(function () {
-		var result = {};
+	switch (type) {
+		case "pie":
+			if (args.type === "events") {
+				data.forEach(function (i) {
+					tmp[i.data.type] = tmp[i.data.type] + 1 || 0;
+					total++;
+				});
 
-		deferred.resolve(result);
-	});
+				$.iterate(tmp, function (v, k) {
+					series.push({
+						label : k.replace("Event", "").replace(/([A-Z])/g, " $1").trim(),
+						value : ((v / total) * 100)
+					});
+				});
+			}
 
-	return deferred;
+			result = [series];
+			break;
+
+		case "stackedArea":
+			/**
+			 * {
+			 * 		key: "label",
+			 * 		values: [[epoch, value]]
+			 * }
+			 */
+			break;
+	}
+
+	return result;
 };

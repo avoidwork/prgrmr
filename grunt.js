@@ -20,7 +20,7 @@ module.exports = function (grunt) {
 			  "<banner>",
 			  "src/intro.js",
 			  "src/api.js",
-			  "src/charts.js",
+			  "src/chart.js",
 			  "src/error.js",
 			  "src/init.js",
 			  "src/log.js",
