@@ -1,11 +1,13 @@
 /**
  * Renders charts
  * 
- * @param  {String} type Type of chart to render
- * @param  {Object} data Chart data
- * @return {Undefined}   undefined
+ * @param  {String} type  Type of chart to render
+ * @param  {String} title Chart title
+ * @param  {Object} data  Chart data
+ * @return {Undefined}    undefined
  */
-var chart = function (type, title, data) {
+var chart = function (type, title, data, colors) {
+	colors  = colors || d3.scale.category10().range();
 	var obj = $("#charts"),
 	    id  = $.genId(true),
 	    arg, section;
@@ -26,7 +28,11 @@ var chart = function (type, title, data) {
 				             })
 				            .values(function (d) {
 				            	return d;
-				            })
+				             })
+				            .tooltipContent(function (key, y, e, graph) {
+				            	return "<h3>" + key + "</h3>" + "<span>" + y + "%</span>";
+				             })
+				            .color(colors)
 				            .showLabels(false);
 
 				d3.select("#" + id)
@@ -34,35 +40,6 @@ var chart = function (type, title, data) {
 				  .transition().duration(1200)
 				  .call(obj);
 
-				return obj;
-			};
-			break;
-
-		case "stackedArea":
-			arg = function () {
-				var obj = nv.models.stackedAreaChart()
-				                   .x(function (d) {
-				                   		return d[0];
-				                   	})
-				                   .y(function (d) {
-				                   		return d[1];
-				                   	})
-				                   .clipEdge(true);
-
-				obj.xAxis
-				   .tickFormat(function (d) {
-				   		return d3.time.format('%x')(new Date(d));
-				   	});
-
-				obj.yAxis
-				   .tickFormat(d3.format(',.2f'));
-
-				d3.select("#" + id)
-				  .datum(data)
-				  .transition().duration(500)
-				  .call(obj);
-
-				nv.utils.windowResize(obj.update);
 				return obj;
 			};
 			break;

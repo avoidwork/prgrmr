@@ -13,7 +13,10 @@
 (function (global) {
 "use strict";
 
-var $, prgrmr = {blog: {}, config: {}, events: {}, orgs: {}, repos: {}, templates: {}, version: "0.1.0"};
+var $,
+    dColors = ["#FF0000", "#FF7400", "#009999", "#00CC00", "#FFF141", "#A1F73F", "#FFBB00", "#A7A500", "#7B005D", "#450070", "#5F15F6", "#EA0043", "#2AF000", "#41D988", "#3FA9CD", "#046889", "#F09C45", "#7BB000"],
+    eColors = ["CommitCommentEvent", "CreateEvent", "DeleteEvent", "DownloadEvent", "FollowEvent", "ForkEvent", "ForkApplyEvent", "GistEvent", "GollumEvent", "IssueCommentEvent", "IssuesEvent", "MemberEvent", "PublicEvent", "PullRequestEvent", "PullRequestReviewCommentEvent", "PushEvent", "TeamAddEvent", "WatchEvent"],
+    prgrmr  = {blog: {}, config: {}, events: {}, orgs: {}, repos: {}, templates: {}, version: "0.1.0"};
 
 /**
  * GitHub API end points
@@ -29,11 +32,13 @@ var api = {
 /**
  * Renders charts
  * 
- * @param  {String} type Type of chart to render
- * @param  {Object} data Chart data
- * @return {Undefined}   undefined
+ * @param  {String} type  Type of chart to render
+ * @param  {String} title Chart title
+ * @param  {Object} data  Chart data
+ * @return {Undefined}    undefined
  */
-var chart = function (type, title, data) {
+var chart = function (type, title, data, colors) {
+	colors  = colors || d3.scale.category10().range();
 	var obj = $("#charts"),
 	    id  = $.genId(true),
 	    arg, section;
@@ -54,7 +59,11 @@ var chart = function (type, title, data) {
 				             })
 				            .values(function (d) {
 				            	return d;
-				            })
+				             })
+				            .tooltipContent(function (key, y, e, graph) {
+				            	return "<h3>" + key + "</h3>" + "<span>" + y + "%</span>";
+				             })
+				            .color(colors)
 				            .showLabels(false);
 
 				d3.select("#" + id)
@@ -62,35 +71,6 @@ var chart = function (type, title, data) {
 				  .transition().duration(1200)
 				  .call(obj);
 
-				return obj;
-			};
-			break;
-
-		case "stackedArea":
-			arg = function () {
-				var obj = nv.models.stackedAreaChart()
-				                   .x(function (d) {
-				                   		return d[0];
-				                   	})
-				                   .y(function (d) {
-				                   		return d[1];
-				                   	})
-				                   .clipEdge(true);
-
-				obj.xAxis
-				   .tickFormat(function (d) {
-				   		return d3.time.format('%x')(new Date(d));
-				   	});
-
-				obj.yAxis
-				   .tickFormat(d3.format(',.2f'));
-
-				d3.select("#" + id)
-				  .datum(data)
-				  .transition().duration(500)
-				  .call(obj);
-
-				nv.utils.windowResize(obj.update);
 				return obj;
 			};
 			break;
@@ -213,7 +193,7 @@ var log = function (msg, silent) {
  */
 var render = function (arg) {
 	var obj = $("#" + arg),
-	    callback;
+	    callback, colors, data;
 
 	/**
 	 * DataList callback
@@ -225,7 +205,7 @@ var render = function (arg) {
 	 */
 	callback = function (obj) {
 		var moments = obj.find(".moment"),
-		    rec, el;
+		    el, rec;
 
 		moments.forEach(function (i) {
 			i.text(moment(i.text()).fromNow());
@@ -240,7 +220,7 @@ var render = function (arg) {
 			case "repos":
 				rec = prgrmr[arg].data.get(obj.data("key").toString());
 				el  = obj.find("> a")[0];
-				obj.find("> span")[0].addClass(rec.data.fork ? "icon-circle-blank" : "icon-circle");
+				obj.find("> span")[0].addClass(rec.data.fork ? "icon-circle-blank forked" : "icon-circle authored");
 				if (el.attr("href").isEmpty()) el.attr("href", rec.data.html_url);
 				break;
 		}
@@ -251,12 +231,20 @@ var render = function (arg) {
 	
 	switch (arg) {
 		case "events":
-			chart("pie", "Types of Events", transform("pie", prgrmr[arg].data.get(), arg));
+			colors = [];
+			data   = transform("pie", prgrmr[arg].data.get(), arg);
+
+			// Syncing colors
+			data[0].forEach(function (i) {
+				colors.push(dColors[eColors.index(i.key + "Event")] || dColors.last());
+			});
+
+			chart("pie", "Recent Activities", data, colors);
 			break;
 		case "orgs":
 			break;
 		case "repos":
-			chart("pie", "Types of Repositories", transform("pie", prgrmr[arg].data.get(), arg));
+			chart("pie", "Repositories", transform("pie", prgrmr[arg].data.get(), arg), ["#009999", "#9FEE00"]);
 			break;
 	}
 };
@@ -356,21 +344,18 @@ var spinner = function (obj, size) {
  * @return {Array}       NVD3 chart data
  */
 var transform = function (chartType, data, type) {
-	var result     = [],
-	    epochs     = [],
-	    types      = [],
-	    categories = [],
-	    series     = [],
-	    records    = {},
-	    pie        = [],
-	    tmp        = {},
-	    total      = 0;
+	var result = [],
+	    series = [],
+	    tmp    = {},
+	    total  = 0;
 
 	switch (chartType) {
 		case "pie":
 			if (type === "events") {
 				data.forEach(function (i) {
-					tmp[i.data.type] = tmp[i.data.type] + 1 || 1;
+					var prop = i.data.type;
+
+					tmp[prop] = tmp[prop] + 1 || 1;
 					total++;
 				});
 
@@ -383,9 +368,9 @@ var transform = function (chartType, data, type) {
 			}
 			else if (type === "repos") {
 				data.forEach(function (i) {
-					var label = i.data.fork ? "Forked" : "Authored";
+					var prop = i.data.fork ? "Forked" : "Authored";
 
-					tmp[label] = tmp[label] + 1 || 1;
+					tmp[prop] = tmp[prop] + 1 || 1;
 					total++;
 				});
 
@@ -398,15 +383,6 @@ var transform = function (chartType, data, type) {
 			}
 
 			result = [series];
-			break;
-
-		case "stackedArea":
-			/**
-			 * {
-			 * 		key: "label",
-			 * 		values: [[epoch, value]]
-			 * }
-			 */
 			break;
 	}
 

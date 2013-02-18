@@ -6,21 +6,18 @@
  * @return {Array}       NVD3 chart data
  */
 var transform = function (chartType, data, type) {
-	var result     = [],
-	    epochs     = [],
-	    types      = [],
-	    categories = [],
-	    series     = [],
-	    records    = {},
-	    pie        = [],
-	    tmp        = {},
-	    total      = 0;
+	var result = [],
+	    series = [],
+	    tmp    = {},
+	    total  = 0;
 
 	switch (chartType) {
 		case "pie":
 			if (type === "events") {
 				data.forEach(function (i) {
-					tmp[i.data.type] = tmp[i.data.type] + 1 || 1;
+					var prop = i.data.type;
+
+					tmp[prop] = tmp[prop] + 1 || 1;
 					total++;
 				});
 
@@ -33,9 +30,9 @@ var transform = function (chartType, data, type) {
 			}
 			else if (type === "repos") {
 				data.forEach(function (i) {
-					var label = i.data.fork ? "Forked" : "Authored";
+					var prop = i.data.fork ? "Forked" : "Authored";
 
-					tmp[label] = tmp[label] + 1 || 1;
+					tmp[prop] = tmp[prop] + 1 || 1;
 					total++;
 				});
 
@@ -48,15 +45,6 @@ var transform = function (chartType, data, type) {
 			}
 
 			result = [series];
-			break;
-
-		case "stackedArea":
-			/**
-			 * {
-			 * 		key: "label",
-			 * 		values: [[epoch, value]]
-			 * }
-			 */
 			break;
 	}
 

@@ -5,7 +5,7 @@
  */
 var render = function (arg) {
 	var obj = $("#" + arg),
-	    callback;
+	    callback, colors, data;
 
 	/**
 	 * DataList callback
@@ -17,7 +17,7 @@ var render = function (arg) {
 	 */
 	callback = function (obj) {
 		var moments = obj.find(".moment"),
-		    rec, el;
+		    el, rec;
 
 		moments.forEach(function (i) {
 			i.text(moment(i.text()).fromNow());
@@ -32,7 +32,7 @@ var render = function (arg) {
 			case "repos":
 				rec = prgrmr[arg].data.get(obj.data("key").toString());
 				el  = obj.find("> a")[0];
-				obj.find("> span")[0].addClass(rec.data.fork ? "icon-circle-blank" : "icon-circle");
+				obj.find("> span")[0].addClass(rec.data.fork ? "icon-circle-blank forked" : "icon-circle authored");
 				if (el.attr("href").isEmpty()) el.attr("href", rec.data.html_url);
 				break;
 		}
@@ -43,12 +43,20 @@ var render = function (arg) {
 	
 	switch (arg) {
 		case "events":
-			chart("pie", "Types of Events", transform("pie", prgrmr[arg].data.get(), arg));
+			colors = [];
+			data   = transform("pie", prgrmr[arg].data.get(), arg);
+
+			// Syncing colors
+			data[0].forEach(function (i) {
+				colors.push(dColors[eColors.index(i.key + "Event")] || dColors.last());
+			});
+
+			chart("pie", "Recent Activities", data, colors);
 			break;
 		case "orgs":
 			break;
 		case "repos":
-			chart("pie", "Types of Repositories", transform("pie", prgrmr[arg].data.get(), arg));
+			chart("pie", "Repositories", transform("pie", prgrmr[arg].data.get(), arg), ["#009999", "#9FEE00"]);
 			break;
 	}
 };
