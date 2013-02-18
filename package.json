@@ -1,6 +1,6 @@
 {
   "name": "prgrmr",
-  "description": "Programmer profile for GitHub projects",
+  "description": "Single page JavaScript dashboard of a Programmer's activity on GitHub",
   "version": "0.1.0",
   "homepage": "https://github.com/avoidwork/prgrmr",
   "author": {
@@ -31,5 +31,5 @@
     "grunt": "~0.3.17",
     "turtle.io" : ">= 0.5.0"
   },
-  "keywords": ["programmer", "profile", "github", "projects", "charts"]
+  "keywords": ["programmer", "profile", "github", "projects", "charts", "dashboard"]
 }
