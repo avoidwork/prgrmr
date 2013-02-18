@@ -8,11 +8,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
 <link rel="stylesheet" type="text/css" href="assets/css/style.css" media="print,screen" />
+<link rel="stylesheet" type="text/css" href="assets/font-awesome/css/font-awesome.min.css" media="print,screen" />
 <link rel="stylesheet" type="text/css" href="humane/themes/jackedup.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Josefin+Sans" media="print,screen" />
-<script type="text/javascript" src="http://cdn.abaaso.com/abaaso.js"></script>
+<script type="text/javascript" src="http://cdn.abaaso.com/abaaso.min.js"></script>
 <script type="text/javascript" src="assets/prgrmr.js"></script>
 <script type="text/javascript" src="assets/modernizr.js"></script>
+<script type="text/javascript" src="assets/moment.min.js"></script>
 <script type="text/javascript" src="assets/spin.min.js"></script>
 <script type="text/javascript" src="humane/humane.min.js"></script>
 <script type="text/javascript" src="nvd3/lib/d3.v2.js"></script>
@@ -26,25 +28,29 @@
 
 <article>
 
+<section class="hidden">
+	<ul id="contact"></ul>
+</section>
+
 <section id="charts" class="hidden">
 	<h2>Pretty charts</h2>
 </section>
 
-<section id="events" class="hidden">
-	<h2>Recent Work</h2>
-</section>
+<div class="col">
+	<section id="events" class="hidden">
+		<h2>Recent Activities</h2>
+	</section>
+</div>
 
-<section id="repos" class="hidden">
-	<h2>Projects</h2>
-</section>
+<div class="col">
+	<section id="repos" class="hidden">
+		<h2>Repositories</h2>
+	</section>
 
-<section id="orgs" class="hidden">
-	<h2>Organizations</h2>
-</section>
-
-<section id="contact" class="hidden">
-	<h2>Contact Me</h2>
-</section>
+	<section id="orgs" class="hidden">
+		<h2>Organizations</h2>
+	</section>
+</div>
 
 </article>
 

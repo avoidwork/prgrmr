@@ -59,7 +59,8 @@ var error = function (e) {
  * @return {Undefined} undefined
  */
 var init = function () {
-	var header  = $("header > h1")[0],
+	var contact = $("#contact"),
+	    header  = $("header > h1")[0],
 	    title   = $("title")[0],
 	    version = $("#version"),
 	    main    = $("article")[0],
@@ -85,7 +86,19 @@ var init = function () {
 		// Decorating placeholders
 		header.html(arg.name);
 		title.html(arg.name);
+
+		// Decorating icons
+		contact.create("li").create("a", {href: "https://github.com/" + arg.github, title: "GitHub"}).create("span", {"class": "icon icon-github"});
+		if (arg.email.isEmail()) contact.create("li").create("a", {href: "mailto:" + arg.email, title: "Email"}).create("span", {"class": "icon icon-envelope-alt"});
+		if (!arg.twitter.isEmpty()) contact.create("li").create("a", {href: "http://twitter.com/" + arg.twitter, title: "Twitter"}).create("span", {"class": "icon icon-twitter"});
+		if (!arg.blog.isEmpty()) contact.create("li").create("a", {href: arg.blog, title: "Blog"}).create("span", {"class": "icon icon-rss"});
+
+		// Showing icons
+		if (contact.childNodes.length > 0) contact.parentNode.removeClass("hidden");
+		
 	}, function (e) {
+		loading.el.destroy();
+		loading = null;
 		error(e);
 		throw e;
 	}).then(function (arg) {
@@ -102,6 +115,8 @@ var init = function () {
 		// Decorating the global namespace with application
 		global.prgrmr = prgrmr;
 	}, function (e) {
+		loading.el.destroy();
+		loading = null;
 		error("Configuration is not valid: " + (e.message || e));
 		throw e;
 	}).then(function (arg) {
@@ -109,6 +124,8 @@ var init = function () {
 		retrieve("orgs", loading);
 		retrieve("repos", loading);
 	}, function (e) {
+		loading.el.destroy();
+		loading = null;
 		error("Could not consume APIs");
 	});
 };
@@ -136,11 +153,38 @@ var render = function (arg) {
 	var obj = $("#" + arg),
 	    callback;
 
-	callback = function (e) {
-		void 0;
+	/**
+	 * DataList callback
+	 *
+	 * GitHub keys are ints, so they must cast to String for lookup
+	 * 
+	 * @param  {Object}   obj DataList Element
+	 * @return {Undefined}    undefined
+	 */
+	callback = function (obj) {
+		var moments = obj.find(".moment"),
+		    rec, el;
+
+		moments.forEach(function (i) {
+			i.text(moment(i.text()).fromNow());
+		});
+
+		switch (arg) {
+			case "events":
+				rec = prgrmr[arg].data.get(obj.data("key").toString());
+				obj.find("> span")[0].addClass(rec.data.type);
+				obj.find("a")[0].attr("title", rec.data.type.replace("Event", "").replace(/([A-Z])/g, " $1").trim())
+				break;
+			case "repos":
+				rec = prgrmr[arg].data.get(obj.data("key").toString());
+				el  = obj.find("> a")[0];
+				obj.find("> span")[0].addClass(rec.data.fork ? "icon-circle-blank" : "icon-circle");
+				if (el.attr("href").isEmpty()) el.attr("href", rec.data.html_url);
+				break;
+		}
 	};
 
-	prgrmr[arg].datalist = $.datalist(obj, prgrmr[arg].data, prgrmr.templates[arg], callback);
+	prgrmr[arg].datalist = $.datalist(obj, prgrmr[arg].data, prgrmr.templates[arg], {callback: callback});
 	obj.removeClass("hidden");
 	charts(arg);
 };

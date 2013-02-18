@@ -4,3 +4,6 @@
 [submodule "humane"]
 	path = humane
 	url = git://github.com/wavded/humane-js.git
+[submodule "assets/font-awesome"]
+	path = assets/font-awesome
+	url = git://github.com/FortAwesome/Font-Awesome.git

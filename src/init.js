@@ -6,7 +6,8 @@
  * @return {Undefined} undefined
  */
 var init = function () {
-	var header  = $("header > h1")[0],
+	var contact = $("#contact"),
+	    header  = $("header > h1")[0],
 	    title   = $("title")[0],
 	    version = $("#version"),
 	    main    = $("article")[0],
@@ -32,7 +33,19 @@ var init = function () {
 		// Decorating placeholders
 		header.html(arg.name);
 		title.html(arg.name);
+
+		// Decorating icons
+		contact.create("li").create("a", {href: "https://github.com/" + arg.github, title: "GitHub"}).create("span", {"class": "icon icon-github"});
+		if (arg.email.isEmail()) contact.create("li").create("a", {href: "mailto:" + arg.email, title: "Email"}).create("span", {"class": "icon icon-envelope-alt"});
+		if (!arg.twitter.isEmpty()) contact.create("li").create("a", {href: "http://twitter.com/" + arg.twitter, title: "Twitter"}).create("span", {"class": "icon icon-twitter"});
+		if (!arg.blog.isEmpty()) contact.create("li").create("a", {href: arg.blog, title: "Blog"}).create("span", {"class": "icon icon-rss"});
+
+		// Showing icons
+		if (contact.childNodes.length > 0) contact.parentNode.removeClass("hidden");
+		
 	}, function (e) {
+		loading.el.destroy();
+		loading = null;
 		error(e);
 		throw e;
 	}).then(function (arg) {
@@ -49,6 +62,8 @@ var init = function () {
 		// Decorating the global namespace with application
 		global.prgrmr = prgrmr;
 	}, function (e) {
+		loading.el.destroy();
+		loading = null;
 		error("Configuration is not valid: " + (e.message || e));
 		throw e;
 	}).then(function (arg) {
@@ -56,6 +71,8 @@ var init = function () {
 		retrieve("orgs", loading);
 		retrieve("repos", loading);
 	}, function (e) {
+		loading.el.destroy();
+		loading = null;
 		error("Could not consume APIs");
 	});
 };
