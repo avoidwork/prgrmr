@@ -31,8 +31,10 @@ var init = function () {
 		prgrmr.config = arg;
 
 		// Decorating placeholders
-		header.html(arg.name);
-		title.html(arg.name);
+		if (!arg.name.isEmpty()) {
+			header.html(arg.name);
+			title.html(arg.name);
+		}
 
 		// Decorating icons
 		contact.create("li").create("a", {"class": "github", href: "https://github.com/" + arg.github, title: "GitHub"}).create("span", {"class": "icon icon-github"});
