@@ -70,9 +70,15 @@ h1 {
 
 .chart {
 	width: 400px;
-	height: 400px;
+	height: 450px;
 	margin: 0 $spacer $spacer 0;
 	float: left;
+	overflow: hidden;
+
+	svg {
+		width: 400px;
+		height: 400px;
+	}
 }
 
 .col {
