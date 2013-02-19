@@ -7,7 +7,7 @@
  * @copyright 2013 Jason Mulligan
  * @license BSD-3 <https://raw.github.com/avoidwork/prgrmr/master/LICENSE>
  * @link https://github.com/avoidwork/prgrmr
- * @version 0.1.1
+ * @version 0.1.2
  */
 
 (function (global) {
@@ -16,7 +16,7 @@
 var $,
     dColors = ["#FF0000", "#FF7400", "#009999", "#00CC00", "#FFF141", "#A1F73F", "#FFBB00", "#A7A500", "#7B005D", "#450070", "#5F15F6", "#EA0043", "#2AF000", "#41D988", "#3FA9CD", "#046889", "#F09C45", "#7BB000"],
     eColors = ["CommitCommentEvent", "CreateEvent", "DeleteEvent", "DownloadEvent", "FollowEvent", "ForkEvent", "ForkApplyEvent", "GistEvent", "GollumEvent", "IssueCommentEvent", "IssuesEvent", "MemberEvent", "PublicEvent", "PullRequestEvent", "PullRequestReviewCommentEvent", "PushEvent", "TeamAddEvent", "WatchEvent"],
-    prgrmr  = {blog: {}, config: {}, events: {}, orgs: {}, repos: {}, templates: {}, version: "0.1.1"};
+    prgrmr  = {blog: {}, config: {}, events: {}, orgs: {}, repos: {}, templates: {}, version: "0.1.2"};
 
 /**
  * GitHub API end points
@@ -37,15 +37,14 @@ var api = {
  * @param  {Object} data  Chart data
  * @return {Undefined}    undefined
  */
-var chart = function (type, title, data, colors) {
-	colors  = colors || d3.scale.category10().range();
-	var obj = $("#charts"),
-	    id  = $.genId(true),
-	    arg, section;
+var chart = function (type, title, data, obj, colors) {
+	colors = colors || d3.scale.category10().range();
+	var id = obj.id,
+	    arg;
 
-	section = obj.removeClass("hidden").append("div", {"class": "chart"});
-	section.append("h2").text(title);
-	section.append("svg", {id: id});
+	$("#charts").removeClass("hidden");
+
+	obj.parentNode.prepend("h2").text(title);
 
 	switch (type) {
 		case "pie":
@@ -239,12 +238,12 @@ var render = function (arg) {
 				colors.push(dColors[eColors.index(i.key + "Event")] || dColors.last());
 			});
 
-			chart("pie", "Recent Activities", data, colors);
+			chart("pie", "Recent Activities", data, $("#recent-activities"), colors);
 			break;
 		case "orgs":
 			break;
 		case "repos":
-			chart("pie", "Repositories", transform("pie", prgrmr[arg].data.get(), arg), ["#009999", "#9FEE00"]);
+			chart("pie", "Repositories", transform("pie", prgrmr[arg].data.get(), arg), $("#repositories"), ["#009999", "#9FEE00"]);
 			break;
 	}
 };

@@ -51,12 +51,12 @@ var render = function (arg) {
 				colors.push(dColors[eColors.index(i.key + "Event")] || dColors.last());
 			});
 
-			chart("pie", "Recent Activities", data, colors);
+			chart("pie", "Recent Activities", data, $("#recent-activities"), colors);
 			break;
 		case "orgs":
 			break;
 		case "repos":
-			chart("pie", "Repositories", transform("pie", prgrmr[arg].data.get(), arg), ["#009999", "#9FEE00"]);
+			chart("pie", "Repositories", transform("pie", prgrmr[arg].data.get(), arg), $("#repositories"), ["#009999", "#9FEE00"]);
 			break;
 	}
 };

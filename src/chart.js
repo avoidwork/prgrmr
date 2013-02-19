@@ -6,15 +6,14 @@
  * @param  {Object} data  Chart data
  * @return {Undefined}    undefined
  */
-var chart = function (type, title, data, colors) {
-	colors  = colors || d3.scale.category10().range();
-	var obj = $("#charts"),
-	    id  = $.genId(true),
-	    arg, section;
+var chart = function (type, title, data, obj, colors) {
+	colors = colors || d3.scale.category10().range();
+	var id = obj.id,
+	    arg;
 
-	section = obj.removeClass("hidden").append("div", {"class": "chart"});
-	section.append("h2").text(title);
-	section.append("svg", {id: id});
+	$("#charts").removeClass("hidden");
+
+	obj.parentNode.prepend("h2").text(title);
 
 	switch (type) {
 		case "pie":

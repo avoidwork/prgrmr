@@ -18,8 +18,8 @@
 <script type="text/javascript" src="assets/moment/min/moment.min.js"></script>
 <script type="text/javascript" src="assets/spin/dist/spin.min.js"></script>
 <script type="text/javascript" src="assets/humane/humane.min.js"></script>
-<script type="text/javascript" src="assets/nvd3/lib/d3.v2.js"></script>
-<script type="text/javascript" src="assets/nvd3/nv.d3.js"></script>
+<script type="text/javascript" src="assets/nvd3/lib/d3.v2.min.js"></script>
+<script type="text/javascript" src="assets/nvd3/nv.d3.min.js"></script>
 </head>
 <body>
 
@@ -29,7 +29,14 @@
 
 <article>
 
-<section id="charts" class="hidden"></section>
+<section id="charts" class="hidden">
+	<div class="chart">
+		<svg id="recent-activities"></svg>
+	</div>
+	<div class="chart">
+		<svg id="repositories"></svg>
+	</div>
+</section>
 
 <div class="col">
 	<section id="events" class="hidden">
