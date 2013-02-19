@@ -8,7 +8,15 @@
 var retrieve = function (arg, loading) {
 	var deferred = $.promise();
 
-	prgrmr[arg].data.setUri(api[arg]).then(function () {
+	prgrmr[arg].data.setUri(api[arg]).then(function (args) {
+		if (args.length === 1 && args[0].data.message !== undefined) {
+			if (loading !== null) {
+				loading.el.destroy();
+				loading = null;
+			}
+			return error(args[0].data.message);
+		}
+
 		("templates/" + arg + ".html").get(function (tpl) {
 			prgrmr.templates[arg] = tpl;
 			if (loading !== null) {
