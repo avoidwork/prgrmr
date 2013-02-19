@@ -72,7 +72,7 @@ var init = function () {
 	}).then(function (arg) {
 		retrieve("events", loading);
 		retrieve("orgs", loading);
-		retrieve("repos", loading);
+		retrieve("repos", loading, repos);
 	}, function (e) {
 		loading.el.destroy();
 		loading = null;
