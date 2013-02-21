@@ -1,7 +1,7 @@
 {
-	"name"     : "",
-	"email"    : "",
-	"blog"     : "",
+	"name"     : true,
+	"email"    : true,
+	"blog"     : true,
 	"github"   : "",
 	"linkedin" : "",
 	"twitter"  : ""
