@@ -48,7 +48,7 @@ var render = function (arg) {
 
 			// Syncing colors
 			data[0].forEach(function (i) {
-				colors.push(dColors[eColors.index(i.key + "Event")] || dColors.last());
+				colors.push(dColors[eColors.index(i.key.replace(/\s+/g, "") + "Event")] || dColors.last());
 			});
 
 			chart("pie", "Recent Activities", data, $("#recent-activities"), colors);
