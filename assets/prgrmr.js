@@ -141,10 +141,10 @@ var init = function () {
 		error("Configuration is not valid: " + (e.message || e));
 		throw e;
 	}).then(function (arg) {
-		retrieve("me", loading);
+		retrieve("me",     null);
 		retrieve("events", loading);
-		retrieve("orgs", loading);
-		retrieve("repos", loading, repos);
+		retrieve("orgs",   loading);
+		retrieve("repos",  loading, repos);
 	}, function (e) {
 		loading.el.destroy();
 		loading = null;
