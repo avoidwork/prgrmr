@@ -95,9 +95,14 @@ h1 {
 	display: none;
 }
 
+.moment {
+	vertical-align: top;
+}
+
 .repo {
 	display: inline-block;
 	width: 200px;
+	word-wrap: break-word;
 }
 
 #charts {
