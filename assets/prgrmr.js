@@ -133,7 +133,7 @@ var init = function () {
 		contact.create("li").create("a", {"class": "github", href: "https://github.com/" + arg.github, title: "GitHub"}).create("span", {"class": "icon icon-github"});
 		if (arg.email.isEmail()) contact.create("li").create("a", {"class": "email", href: "mailto:" + arg.email, title: "Email"}).create("span", {"class": "icon icon-envelope-alt"});
 		if (!arg.twitter.isEmpty()) contact.create("li").create("a", {"class": "twitter", href: "http://twitter.com/" + arg.twitter, title: "Twitter"}).create("span", {"class": "icon icon-twitter"});
-		if (!arg.linkedin.isEmpty()) contact.create("li").create("a", {"class": "linkedin", href: arg.blog, title: "LinkedIn"}).create("span", {"class": "icon icon-linkedin"});
+		if (!arg.linkedin.isEmpty()) contact.create("li").create("a", {"class": "linkedin", href: arg.linkedin, title: "LinkedIn"}).create("span", {"class": "icon icon-linkedin"});
 		if (!arg.blog.isEmpty()) contact.create("li").create("a", {"class": "blog", href: arg.blog, title: "Blog"}).create("span", {"class": "icon icon-rss"});
 
 		// Showing icons
