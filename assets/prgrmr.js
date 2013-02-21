@@ -7,7 +7,7 @@
  * @copyright 2013 Jason Mulligan
  * @license BSD-3 <https://raw.github.com/avoidwork/prgrmr/master/LICENSE>
  * @link https://github.com/avoidwork/prgrmr
- * @version 0.1.4
+ * @version 0.1.5
  */
 
 (function (global) {
@@ -16,7 +16,7 @@
 var $,
     dColors = ["#FF0000", "#FF7400", "#009999", "#00CC00", "#FFF141", "#A1F73F", "#FFBB00", "#A7A500", "#7B005D", "#450070", "#5F15F6", "#EA0043", "#2AF000", "#41D988", "#3FA9CD", "#046889", "#F09C45", "#7BB000"],
     eColors = ["CommitCommentEvent", "CreateEvent", "DeleteEvent", "DownloadEvent", "FollowEvent", "ForkEvent", "ForkApplyEvent", "GistEvent", "GollumEvent", "IssueCommentEvent", "IssuesEvent", "MemberEvent", "PublicEvent", "PullRequestEvent", "PullRequestReviewCommentEvent", "PushEvent", "TeamAddEvent", "WatchEvent"],
-    prgrmr  = {blog: {}, config: {}, events: {}, orgs: {}, repos: {}, templates: {}, version: "0.1.4"};
+    prgrmr  = {config: {}, events: {}, orgs: {}, repos: {}, me: {}, templates: {}, version: "0.1.5"};
 
 /**
  * GitHub API end points
@@ -25,6 +25,7 @@ var $,
  */
 var api = {
 	events : "https://api.github.com/users/{{user}}/events?callback=?",
+	me     : "https://api.github.com/users/{{user}}?callback=?",
 	orgs   : "https://api.github.com/users/{{user}}/orgs?callback=?",
 	repos  : "https://api.github.com/users/{{user}}/repos?callback=?"
 };
@@ -99,11 +100,9 @@ var error = function (e) {
  * @return {Undefined} undefined
  */
 var init = function () {
-	var contact = $("#contact"),
-	    header  = $("header > h1")[0],
-	    title   = $("title")[0],
-	    version = $("#version"),
+	var version = $("#version"),
 	    main    = $("article")[0],
+	    tpl     = {key: "id", events: false, callback: "callback", source: "data"},
 	    loading;
 
 	// Setting up humane notifications
@@ -122,37 +121,16 @@ var init = function () {
 
 		// Setting config on namespace
 		prgrmr.config = arg;
-
-		// Decorating placeholders
-		if (!arg.name.isEmpty()) {
-			header.html(arg.name);
-			title.html(arg.name);
-		}
-
-		// Decorating icons
-		contact.create("li").create("a", {"class": "github", href: "https://github.com/" + arg.github, title: "GitHub"}).create("span", {"class": "icon icon-github"});
-		if (arg.email.isEmail()) contact.create("li").create("a", {"class": "email", href: "mailto:" + arg.email, title: "Email"}).create("span", {"class": "icon icon-envelope-alt"});
-		if (!arg.twitter.isEmpty()) contact.create("li").create("a", {"class": "twitter", href: "http://twitter.com/" + arg.twitter, title: "Twitter"}).create("span", {"class": "icon icon-twitter"});
-		if (!arg.linkedin.isEmpty()) contact.create("li").create("a", {"class": "linkedin", href: arg.linkedin, title: "LinkedIn"}).create("span", {"class": "icon icon-linkedin"});
-		if (!arg.blog.isEmpty()) contact.create("li").create("a", {"class": "blog", href: arg.blog, title: "Blog"}).create("span", {"class": "icon icon-rss"});
-
-		// Showing icons
-		if (contact.childNodes.length > 0) contact.parentNode.removeClass("hidden");
-		
 	}, function (e) {
 		loading.el.destroy();
 		loading = null;
 		error(e);
 		throw e;
 	}).then(function (arg) {
-		// Updating API end points
+		// Updating API end points & creating DataStores
 		$.iterate(api, function (v, k) {
-			api[k] = v.replace("{{user}}", arg.github);
-		});
-
-		// Creating DataStores
-		$.iterate(prgrmr, function (v, k) {
-			this[k] = $.data({id: k}, null, {key: "id", events: false, callback: "callback", source: "data"});
+			api[k]    = v.replace("{{user}}", arg.github);
+			prgrmr[k] = $.data({id: k}, null, tpl);
 		});
 
 		// Decorating the global namespace with application
@@ -163,6 +141,7 @@ var init = function () {
 		error("Configuration is not valid: " + (e.message || e));
 		throw e;
 	}).then(function (arg) {
+		retrieve("me", loading);
 		retrieve("events", loading);
 		retrieve("orgs", loading);
 		retrieve("repos", loading, repos);
@@ -269,9 +248,12 @@ var repos = function (recs) {
  * @return {Object}            Promise
  */
 var retrieve = function (arg, loading, callback) {
-	var deferred = $.promise();
+	var deferred = $.promise(),
+	    contact, header, title;
 
 	prgrmr[arg].data.setUri(api[arg]).then(function (args) {
+		var rec;
+
 		if (args.length === 1 && args[0].data.message !== undefined) {
 			if (loading !== null) {
 				loading.el.destroy();
@@ -280,26 +262,44 @@ var retrieve = function (arg, loading, callback) {
 			return error(args[0].data.message);
 		}
 
-		("templates/" + arg + ".html").get(function (tpl) {
-			prgrmr.templates[arg] = tpl;
-			
-			if (loading !== null) {
-				loading.el.destroy();
-				loading = null;
+		if (arg === "me") {
+			rec     = args[0];
+			contact = $("#contact");
+			header  = $("header > h1")[0];
+			title   = $("title")[0];
+
+			if (prgrmr.config.name) {
+				header.html(rec.data.name);
+				title.html(rec.data.name);
 			}
 
-			render(arg);
-			
-			// Expires in 10 minutes
-			prgrmr[arg].data.setExpires(600000);
-			
-			if (typeof callback === "function") callback(args);
-			
-			deferred.resolve(true);
-		}, function (e) {
-			deferred.reject(e);
-			error(e);
-		});
+			contact.create("li").create("a", {"class": "github", href: "https://github.com/" + prgrmr.config.github, title: "GitHub"}).create("span", {"class": "icon icon-github"});
+			if (prgrmr.config.email && !rec.data.email.isEmpty()) contact.create("li").create("a", {"class": "email", href: "mailto:" + rec.data.email, title: "Email"}).create("span", {"class": "icon icon-envelope-alt"});
+			if (!prgrmr.config.twitter.isEmpty()) contact.create("li").create("a", {"class": "twitter", href: "http://twitter.com/" + prgrmr.config.twitter, title: "Twitter"}).create("span", {"class": "icon icon-twitter"});
+			if (!prgrmr.config.linkedin.isEmpty()) contact.create("li").create("a", {"class": "linkedin", href: prgrmr.config.linkedin, title: "LinkedIn"}).create("span", {"class": "icon icon-linkedin"});
+			if (prgrmr.config.blog && !rec.data.blog.isEmpty()) contact.create("li").create("a", {"class": "blog", href: rec.data.blog, title: "Blog"}).create("span", {"class": "icon icon-rss"});
+
+			contact.parentNode.removeClass("hidden");
+		}
+		else {
+			("templates/" + arg + ".html").get(function (tpl) {
+				prgrmr.templates[arg] = tpl;
+				
+				if (loading !== null) {
+					loading.el.destroy();
+					loading = null;
+				}
+
+				render(arg);
+				
+				if (typeof callback === "function") callback(args);
+				
+				deferred.resolve(true);
+			}, function (e) {
+				deferred.reject(e);
+				error(e);
+			});
+		}
 	}, function (e) {
 		if (loading !== null) {
 			loading.el.destroy();
