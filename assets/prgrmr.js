@@ -7,7 +7,7 @@
  * @copyright 2013 Jason Mulligan
  * @license BSD-3 <https://raw.github.com/avoidwork/prgrmr/master/LICENSE>
  * @link https://github.com/avoidwork/prgrmr
- * @version 0.1.3
+ * @version 0.1.4
  */
 
 (function (global) {
@@ -16,7 +16,7 @@
 var $,
     dColors = ["#FF0000", "#FF7400", "#009999", "#00CC00", "#FFF141", "#A1F73F", "#FFBB00", "#A7A500", "#7B005D", "#450070", "#5F15F6", "#EA0043", "#2AF000", "#41D988", "#3FA9CD", "#046889", "#F09C45", "#7BB000"],
     eColors = ["CommitCommentEvent", "CreateEvent", "DeleteEvent", "DownloadEvent", "FollowEvent", "ForkEvent", "ForkApplyEvent", "GistEvent", "GollumEvent", "IssueCommentEvent", "IssuesEvent", "MemberEvent", "PublicEvent", "PullRequestEvent", "PullRequestReviewCommentEvent", "PushEvent", "TeamAddEvent", "WatchEvent"],
-    prgrmr  = {blog: {}, config: {}, events: {}, orgs: {}, repos: {}, templates: {}, version: "0.1.3"};
+    prgrmr  = {blog: {}, config: {}, events: {}, orgs: {}, repos: {}, templates: {}, version: "0.1.4"};
 
 /**
  * GitHub API end points
