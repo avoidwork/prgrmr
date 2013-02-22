@@ -63,11 +63,11 @@ var init = function () {
 
 			// Showing contact icons
 			contact.create("li").create("a", {"class": "github", href: "https://github.com/" + config.github, title: "GitHub"}).create("span", {"class": "icon icon-github"});
-			if (config.email && !rec.data.email.isEmpty()) contact.create("li").create("a", {"class": "email", href: "mailto:" + rec.data.email, title: "Email"}).create("span", {"class": "icon icon-envelope-alt"});
+			if (config.email && rec.data.email !== null) contact.create("li").create("a", {"class": "email", href: "mailto:" + rec.data.email, title: "Email"}).create("span", {"class": "icon icon-envelope-alt"});
 			if (!config.gplus.isEmpty()) contact.create("li").create("a", {"class": "gplus", href: "https://plus.google.com/" + config.gplus, title: "Google Plus"}).create("span", {"class": "icon icon-google-plus"});
 			if (!config.twitter.isEmpty()) contact.create("li").create("a", {"class": "twitter", href: "http://twitter.com/" + config.twitter, title: "Twitter"}).create("span", {"class": "icon icon-twitter"});
 			if (!config.linkedin.isEmpty()) contact.create("li").create("a", {"class": "linkedin", href: config.linkedin, title: "LinkedIn"}).create("span", {"class": "icon icon-linkedin"});
-			if (config.blog && !rec.data.blog.isEmpty()) contact.create("li").create("a", {"class": "blog", href: rec.data.blog, title: "Blog"}).create("span", {"class": "icon icon-rss"});
+			if (config.blog && rec.data.blog !== null) contact.create("li").create("a", {"class": "blog", href: rec.data.blog, title: "Blog"}).create("span", {"class": "icon icon-rss"});
 
 			contact.parentNode.removeClass("hidden");
 
