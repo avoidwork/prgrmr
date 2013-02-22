@@ -1,7 +1,7 @@
 {
   "name": "prgrmr",
   "description": "Single page JavaScript dashboard of a Programmer's activity on GitHub",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "homepage": "https://github.com/avoidwork/prgrmr",
   "author": {
     "name": "Jason Mulligan",
