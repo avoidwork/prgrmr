@@ -42,44 +42,74 @@ var init = function () {
 		// Decorating the global namespace with application
 		global.prgrmr = prgrmr;
 	}, function (e) {
-		loading.el.destroy();
-		loading = null;
+		if (loading !== null) {
+			loading.el.destroy();
+			loading = null;
+		}
 		error("Configuration is not valid: " + (e.message || e));
 		throw e;
 	}).then(function (arg) {
-		retrieve("me", null).then(function (rec) {
-			var contact = $("#contact"),
+		retrieve("me").then(function (args) {
+			var rec     = args[0],
+			    contact = $("#contact"),
 			    header  = $("header > h1")[0],
 			    title   = $("title")[0];
 
+			// Decorating header & window
 			if (prgrmr.config.name) {
 				header.html(rec.data.name);
 				title.html(rec.data.name);
 			}
 
+			// Showing contact icons
 			contact.create("li").create("a", {"class": "github", href: "https://github.com/" + prgrmr.config.github, title: "GitHub"}).create("span", {"class": "icon icon-github"});
 			if (prgrmr.config.email && !rec.data.email.isEmpty()) contact.create("li").create("a", {"class": "email", href: "mailto:" + rec.data.email, title: "Email"}).create("span", {"class": "icon icon-envelope-alt"});
 			if (!prgrmr.config.twitter.isEmpty()) contact.create("li").create("a", {"class": "twitter", href: "http://twitter.com/" + prgrmr.config.twitter, title: "Twitter"}).create("span", {"class": "icon icon-twitter"});
 			if (!prgrmr.config.linkedin.isEmpty()) contact.create("li").create("a", {"class": "linkedin", href: prgrmr.config.linkedin, title: "LinkedIn"}).create("span", {"class": "icon icon-linkedin"});
 			if (prgrmr.config.blog && !rec.data.blog.isEmpty()) contact.create("li").create("a", {"class": "blog", href: rec.data.blog, title: "Blog"}).create("span", {"class": "icon icon-rss"});
-
-			// Showing contact icons
 			contact.parentNode.removeClass("hidden");
 
+			// Removing spinner
+			loading.el.destroy();
+			loading = null;
+
 			// Retrieving data
-			retrieve("events", loading);
-			retrieve("orgs",   loading);
-			retrieve("repos",  loading).then(function (arg) {
-				repos(arg);
+			retrieve("events").then(function () {
+				prepare("events").then(function () {
+					render("events");
+				}, function (e) {
+					error(e);
+				});
+			}, function (e) {
+				error(e);
+			});
+
+			retrieve("orgs").then(function () {
+				prepare("orgs").then(function () {
+					render("orgs");
+				}, function (e) {
+					error(e);
+				});
+			}, function (e) {
+				error(e);
+			});
+
+			retrieve("repos").then(function () {
+				prepare("repos").then(function () {
+					render("repos");
+					repos();
+				}, function (e) {
+					error(e);
+				});
+			}, function (e) {
+				error(e);
 			});
 		}, function (e) {
 			loading.el.destroy();
 			loading = null;
-			error("Could not retrieve GitHub account information");
+			error("Could not retrieve GitHub account: " + e.message);
 		});
 	}, function (e) {
-		loading.el.destroy();
-		loading = null;
 		error("Could not consume APIs");
 	});
 };
