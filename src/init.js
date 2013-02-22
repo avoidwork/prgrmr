@@ -74,35 +74,16 @@ var init = function () {
 			loading = null;
 
 			// Retrieving data
-			retrieve("events").then(function () {
-				prepare("events").then(function () {
-					render("events");
+			["events", "orgs", "repos"].forEach(function (i) {
+				retrieve(i).then(function () {
+					prepare(i).then(function () {
+						render(i);
+					}, function (e) {
+						error(e);
+					});
 				}, function (e) {
 					error(e);
-				});
-			}, function (e) {
-				error(e);
-			});
-
-			retrieve("orgs").then(function () {
-				prepare("orgs").then(function () {
-					render("orgs");
-				}, function (e) {
-					error(e);
-				});
-			}, function (e) {
-				error(e);
-			});
-
-			retrieve("repos").then(function () {
-				prepare("repos").then(function () {
-					render("repos");
-					repos();
-				}, function (e) {
-					error(e);
-				});
-			}, function (e) {
-				error(e);
+				});	
 			});
 		}, function (e) {
 			loading.el.destroy();
