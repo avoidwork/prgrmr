@@ -38,25 +38,28 @@ var render = function (arg) {
 		}
 	};
 
-	prgrmr[arg].datalist = $.datalist(obj, prgrmr[arg].data, prgrmr.templates[arg], {callback: callback});
-	obj.removeClass("hidden");
-	
-	switch (arg) {
-		case "events":
-			colors = [];
-			data   = transform("pie", prgrmr[arg].data.get(), arg);
+	// Don't render empty containers
+	if (prgrmr[arg].data.total > 0) {
+		prgrmr[arg].datalist = $.datalist(obj, prgrmr[arg].data, prgrmr.templates[arg], {callback: callback});
+		obj.removeClass("hidden");
+		
+		switch (arg) {
+			case "events":
+				colors = [];
+				data   = transform("pie", prgrmr[arg].data.get(), arg);
 
-			// Syncing colors
-			data[0].forEach(function (i) {
-				colors.push(dColors[eColors.index(i.key.replace(/\s+/g, "") + "Event")] || dColors.last());
-			});
+				// Syncing colors
+				data[0].forEach(function (i) {
+					colors.push(dColors[eColors.index(i.key.replace(/\s+/g, "") + "Event")] || dColors.last());
+				});
 
-			chart("pie", "Recent Activities", data, $("#recent-activities"), colors);
-			break;
-		case "orgs":
-			break;
-		case "repos":
-			chart("pie", "Repositories", transform("pie", prgrmr[arg].data.get(), arg), $("#repositories"), ["#009999", "#9FEE00"]);
-			break;
+				chart("pie", "Recent Activities", data, $("#recent-activities"), colors);
+				break;
+			case "orgs":
+				break;
+			case "repos":
+				chart("pie", "Repositories", transform("pie", prgrmr[arg].data.get(), arg), $("#repositories"), ["#009999", "#9FEE00"]);
+				break;
+		}
 	}
 };
