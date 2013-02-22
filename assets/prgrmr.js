@@ -7,7 +7,7 @@
  * @copyright 2013 Jason Mulligan
  * @license BSD-3 <https://raw.github.com/avoidwork/prgrmr/master/LICENSE>
  * @link https://github.com/avoidwork/prgrmr
- * @version 0.1.5
+ * @version 0.1.6
  */
 
 (function (global) {
@@ -16,7 +16,7 @@
 var $,
     dColors = ["#FF0000", "#FF7400", "#009999", "#00CC00", "#FFF141", "#A1F73F", "#FFBB00", "#A7A500", "#7B005D", "#450070", "#5F15F6", "#EA0043", "#2AF000", "#41D988", "#3FA9CD", "#046889", "#F09C45", "#7BB000"],
     eColors = ["CommitCommentEvent", "CreateEvent", "DeleteEvent", "DownloadEvent", "FollowEvent", "ForkEvent", "ForkApplyEvent", "GistEvent", "GollumEvent", "IssueCommentEvent", "IssuesEvent", "MemberEvent", "PublicEvent", "PullRequestEvent", "PullRequestReviewCommentEvent", "PushEvent", "TeamAddEvent", "WatchEvent"],
-    prgrmr  = {config: {}, events: {}, orgs: {}, repos: {}, me: {}, templates: {}, version: "0.1.5"};
+    prgrmr  = {config: {}, events: {}, orgs: {}, repos: {}, me: {}, templates: {}, version: "0.1.6"};
 
 /**
  * GitHub API end points
@@ -136,18 +136,55 @@ var init = function () {
 		// Decorating the global namespace with application
 		global.prgrmr = prgrmr;
 	}, function (e) {
-		loading.el.destroy();
-		loading = null;
+		if (loading !== null) {
+			loading.el.destroy();
+			loading = null;
+		}
 		error("Configuration is not valid: " + (e.message || e));
 		throw e;
 	}).then(function (arg) {
-		retrieve("me",     null);
-		retrieve("events", loading);
-		retrieve("orgs",   loading);
-		retrieve("repos",  loading, repos);
+		retrieve("me").then(function (args) {
+			var rec     = args[0],
+			    contact = $("#contact"),
+			    header  = $("header > h1")[0],
+			    title   = $("title")[0];
+
+			// Decorating header & window
+			if (prgrmr.config.name) {
+				header.html(rec.data.name);
+				title.html(rec.data.name);
+			}
+
+			// Showing contact icons
+			contact.create("li").create("a", {"class": "github", href: "https://github.com/" + prgrmr.config.github, title: "GitHub"}).create("span", {"class": "icon icon-github"});
+			if (prgrmr.config.email && !rec.data.email.isEmpty()) contact.create("li").create("a", {"class": "email", href: "mailto:" + rec.data.email, title: "Email"}).create("span", {"class": "icon icon-envelope-alt"});
+			if (!prgrmr.config.twitter.isEmpty()) contact.create("li").create("a", {"class": "twitter", href: "http://twitter.com/" + prgrmr.config.twitter, title: "Twitter"}).create("span", {"class": "icon icon-twitter"});
+			if (!prgrmr.config.linkedin.isEmpty()) contact.create("li").create("a", {"class": "linkedin", href: prgrmr.config.linkedin, title: "LinkedIn"}).create("span", {"class": "icon icon-linkedin"});
+			if (prgrmr.config.blog && !rec.data.blog.isEmpty()) contact.create("li").create("a", {"class": "blog", href: rec.data.blog, title: "Blog"}).create("span", {"class": "icon icon-rss"});
+			contact.parentNode.removeClass("hidden");
+
+			// Removing spinner
+			loading.el.destroy();
+			loading = null;
+
+			// Retrieving data
+			["events", "orgs", "repos"].forEach(function (i) {
+				retrieve(i).then(function () {
+					prepare(i).then(function () {
+						render(i);
+					}, function (e) {
+						error(e);
+					});
+				}, function (e) {
+					error(e);
+				});	
+			});
+		}, function (e) {
+			loading.el.destroy();
+			loading = null;
+			error("Could not retrieve GitHub account: " + e.message);
+		});
 	}, function (e) {
-		loading.el.destroy();
-		loading = null;
 		error("Could not consume APIs");
 	});
 };
@@ -164,6 +201,22 @@ var log = function (msg, silent) {
 
 	$.log(msg);
 	if (!silent) humane.log(msg);
+};
+
+/**
+ * Prepares the GUI by retrieving a template
+ * 
+ * @param  {String} arg API end point
+ * @return {Object}     Promise
+ */
+var prepare = function (arg) {
+	var deferred = ("templates/" + arg + ".html").get(function (tpl) {
+		prgrmr.templates[arg] = tpl;
+	}, function (e) {
+		throw e;
+	});
+
+	return deferred;
 };
 
 /**
@@ -230,83 +283,16 @@ var render = function (arg) {
 };
 
 /**
- * Repositories callback to determine interesting facts
+ * Hooking a DataStore to an API end point
  * 
- * @param  {Array} recs DataStore records
- * @return {Undefined}  undefined
+ * @param  {String} arg API to retrieve
+ * @return {Object}     Promise
  */
-var repos = function (recs) {
-	void 0;
-};
-
-/**
- * Consuming APIs and then executing presentation layer logic
- * 
- * @param  {String}   arg      API to retrieve
- * @param  {Object}   loading  Spinner instance
- * @param  {Function} callback [Optional] Callback function to execute after retrieving a template
- * @return {Object}            Promise
- */
-var retrieve = function (arg, loading, callback) {
-	var deferred = $.promise(),
-	    contact, header, title;
-
-	prgrmr[arg].data.setUri(api[arg]).then(function (args) {
-		var rec;
-
-		if (args.length === 1 && args[0].data.message !== undefined) {
-			if (loading !== null) {
-				loading.el.destroy();
-				loading = null;
-			}
-			return error(args[0].data.message);
-		}
-
-		if (arg === "me") {
-			rec     = args[0];
-			contact = $("#contact");
-			header  = $("header > h1")[0];
-			title   = $("title")[0];
-
-			if (prgrmr.config.name) {
-				header.html(rec.data.name);
-				title.html(rec.data.name);
-			}
-
-			contact.create("li").create("a", {"class": "github", href: "https://github.com/" + prgrmr.config.github, title: "GitHub"}).create("span", {"class": "icon icon-github"});
-			if (prgrmr.config.email && !rec.data.email.isEmpty()) contact.create("li").create("a", {"class": "email", href: "mailto:" + rec.data.email, title: "Email"}).create("span", {"class": "icon icon-envelope-alt"});
-			if (!prgrmr.config.twitter.isEmpty()) contact.create("li").create("a", {"class": "twitter", href: "http://twitter.com/" + prgrmr.config.twitter, title: "Twitter"}).create("span", {"class": "icon icon-twitter"});
-			if (!prgrmr.config.linkedin.isEmpty()) contact.create("li").create("a", {"class": "linkedin", href: prgrmr.config.linkedin, title: "LinkedIn"}).create("span", {"class": "icon icon-linkedin"});
-			if (prgrmr.config.blog && !rec.data.blog.isEmpty()) contact.create("li").create("a", {"class": "blog", href: rec.data.blog, title: "Blog"}).create("span", {"class": "icon icon-rss"});
-
-			contact.parentNode.removeClass("hidden");
-		}
-		else {
-			("templates/" + arg + ".html").get(function (tpl) {
-				prgrmr.templates[arg] = tpl;
-				
-				if (loading !== null) {
-					loading.el.destroy();
-					loading = null;
-				}
-
-				render(arg);
-				
-				if (typeof callback === "function") callback(args);
-				
-				deferred.resolve(true);
-			}, function (e) {
-				deferred.reject(e);
-				error(e);
-			});
-		}
+var retrieve = function (arg) {
+	var deferred = prgrmr[arg].data.setUri(api[arg]).then(function (args) {
+		if (args.length === 1 && args[0].data.message !== undefined) throw Error(args[0].data.message);
 	}, function (e) {
-		if (loading !== null) {
-			loading.el.destroy();
-			loading = null;
-		}
-		deferred.reject(e);
-		error(e);
+		throw e;
 	});
 
 	return deferred;
