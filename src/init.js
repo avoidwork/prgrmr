@@ -77,6 +77,16 @@ var init = function () {
 
 			// Retrieving data
 			["events", "orgs", "repos"].forEach(function (i) {
+				prgrmr[i].data.restore();
+
+				if (prgrmr[i].data.total > 0) {
+					prepare(i).then(function () {
+						render(i);
+					}, function (e) {
+						error(e);
+					});
+				}
+
 				retrieve(i).then(function () {
 					prepare(i).then(function () {
 						render(i);
