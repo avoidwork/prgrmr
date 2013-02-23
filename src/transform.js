@@ -36,12 +36,8 @@ var transform = function (chartType, data, type) {
 					total++;
 				});
 
-				$.iterate(tmp, function (v, k) {
-					series.push({
-						key : k,
-						y   : ((v / total) * 100)
-					});
-				});
+				series.push({key: "Authored", y: ((tmp["Authored"] / total) * 100)});
+				series.push({key: "Forked",   y: ((tmp["Forked"] / total) * 100)});
 			}
 
 			result = [series];
