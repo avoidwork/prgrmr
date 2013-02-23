@@ -7,7 +7,7 @@
  * @copyright 2013 Jason Mulligan
  * @license BSD-3 <https://raw.github.com/avoidwork/prgrmr/master/LICENSE>
  * @link https://github.com/avoidwork/prgrmr
- * @version 0.1.10
+ * @version 0.1.11
  */
 
 (function (global) {
@@ -16,7 +16,7 @@
 var $,
     dColors = ["#FF0000", "#FF7400", "#009999", "#00CC00", "#FFF141", "#A1F73F", "#FFBB00", "#A7A500", "#7B005D", "#450070", "#5F15F6", "#EA0043", "#2AF000", "#41D988", "#3FA9CD", "#046889", "#F09C45", "#7BB000"],
     eColors = ["CommitCommentEvent", "CreateEvent", "DeleteEvent", "DownloadEvent", "FollowEvent", "ForkEvent", "ForkApplyEvent", "GistEvent", "GollumEvent", "IssueCommentEvent", "IssuesEvent", "MemberEvent", "PublicEvent", "PullRequestEvent", "PullRequestReviewCommentEvent", "PushEvent", "TeamAddEvent", "WatchEvent"],
-    prgrmr  = {config: {}, events: {}, orgs: {}, repos: {}, me: {}, templates: {}, version: "0.1.10"};
+    prgrmr  = {config: {}, events: {}, orgs: {}, repos: {}, me: {}, templates: {}, version: "0.1.11"};
 
 /**
  * GitHub API end points
@@ -171,6 +171,16 @@ var init = function () {
 
 			// Retrieving data
 			["events", "orgs", "repos"].forEach(function (i) {
+				prgrmr[i].data.restore();
+
+				if (prgrmr[i].data.total > 0) {
+					prepare(i).then(function () {
+						render(i);
+					}, function (e) {
+						error(e);
+					});
+				}
+
 				retrieve(i).then(function () {
 					prepare(i).then(function () {
 						render(i);
@@ -228,7 +238,7 @@ var prepare = function (arg) {
  */
 var render = function (arg) {
 	var obj = $("#" + arg),
-	    callback, colors, data;
+	    callback, colors, data, el;
 
 	/**
 	 * DataList callback
@@ -263,6 +273,7 @@ var render = function (arg) {
 
 	// Don't render empty containers
 	if (prgrmr[arg].data.total > 0) {
+		obj.find(".list").destroy();
 		prgrmr[arg].datalist = $.datalist(obj, prgrmr[arg].data, prgrmr.templates[arg], {callback: callback});
 		obj.removeClass("hidden");
 		
@@ -270,18 +281,22 @@ var render = function (arg) {
 			case "events":
 				colors = [];
 				data   = transform("pie", prgrmr[arg].data.get(), arg);
+				el     = $("#recent-activities").clear();
+				el.parentNode.find("h2").destroy();
 
 				// Syncing colors
 				data[0].forEach(function (i) {
 					colors.push(dColors[eColors.index(i.key.replace(/\s+/g, "") + "Event")] || dColors.last());
 				});
 
-				chart("pie", "Recent Activities", data, $("#recent-activities"), colors);
+				chart("pie", "Recent Activities", data, el, colors);
 				break;
 			case "orgs":
 				break;
 			case "repos":
-				chart("pie", "Repositories", transform("pie", prgrmr[arg].data.get(), arg), $("#repositories"), ["#009999", "#9FEE00"]);
+				el = $("#repositories").clear();
+				el.parentNode.find("h2").destroy();
+				chart("pie", "Repositories", transform("pie", prgrmr[arg].data.get(), arg), el, ["#009999", "#9FEE00"]);
 				break;
 		}
 	}
@@ -296,6 +311,7 @@ var render = function (arg) {
 var retrieve = function (arg) {
 	var deferred = prgrmr[arg].data.setUri(api[arg]).then(function (args) {
 		if (args.length === 1 && args[0].data.message !== undefined) throw Error(args[0].data.message);
+		prgrmr[arg].data.save();
 	}, function (e) {
 		throw e;
 	});

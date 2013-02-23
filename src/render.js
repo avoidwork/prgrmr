@@ -5,7 +5,7 @@
  */
 var render = function (arg) {
 	var obj = $("#" + arg),
-	    callback, colors, data;
+	    callback, colors, data, el;
 
 	/**
 	 * DataList callback
@@ -40,6 +40,7 @@ var render = function (arg) {
 
 	// Don't render empty containers
 	if (prgrmr[arg].data.total > 0) {
+		obj.find(".list").destroy();
 		prgrmr[arg].datalist = $.datalist(obj, prgrmr[arg].data, prgrmr.templates[arg], {callback: callback});
 		obj.removeClass("hidden");
 		
@@ -47,18 +48,22 @@ var render = function (arg) {
 			case "events":
 				colors = [];
 				data   = transform("pie", prgrmr[arg].data.get(), arg);
+				el     = $("#recent-activities").clear();
+				el.parentNode.find("h2").destroy();
 
 				// Syncing colors
 				data[0].forEach(function (i) {
 					colors.push(dColors[eColors.index(i.key.replace(/\s+/g, "") + "Event")] || dColors.last());
 				});
 
-				chart("pie", "Recent Activities", data, $("#recent-activities"), colors);
+				chart("pie", "Recent Activities", data, el, colors);
 				break;
 			case "orgs":
 				break;
 			case "repos":
-				chart("pie", "Repositories", transform("pie", prgrmr[arg].data.get(), arg), $("#repositories"), ["#009999", "#9FEE00"]);
+				el = $("#repositories").clear();
+				el.parentNode.find("h2").destroy();
+				chart("pie", "Repositories", transform("pie", prgrmr[arg].data.get(), arg), el, ["#009999", "#9FEE00"]);
 				break;
 		}
 	}
