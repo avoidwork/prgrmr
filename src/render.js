@@ -40,9 +40,11 @@ var render = function (arg) {
 
 	// Don't render empty containers
 	if (prgrmr[arg].data.total > 0) {
-		obj.find(".list").destroy();
-		prgrmr[arg].datalist = $.datalist(obj, prgrmr[arg].data, prgrmr.templates[arg], {callback: callback});
-		obj.removeClass("hidden");
+		// No need to create multiple DataLists
+		if (prgrmr[arg].datalist === undefined) {
+			prgrmr[arg].datalist = $.datalist(obj, prgrmr[arg].data, prgrmr.templates[arg], {callback: callback});
+			obj.removeClass("hidden");
+		}
 		
 		switch (arg) {
 			case "events":
