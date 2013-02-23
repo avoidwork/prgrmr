@@ -365,7 +365,7 @@ var transform = function (chartType, data, type) {
 	var result = [],
 	    series = [],
 	    tmp    = {},
-	    total  = 0;
+	    total  = data.length;
 
 	switch (chartType) {
 		case "pie":
@@ -374,7 +374,6 @@ var transform = function (chartType, data, type) {
 					var prop = i.data.type;
 
 					tmp[prop] = tmp[prop] + 1 || 1;
-					total++;
 				});
 
 				$.iterate(tmp, function (v, k) {
@@ -389,11 +388,10 @@ var transform = function (chartType, data, type) {
 					var prop = i.data.fork ? "Forked" : "Authored";
 
 					tmp[prop] = tmp[prop] + 1 || 1;
-					total++;
 				});
 
 				series.push({key: "Authored", y: ((tmp["Authored"] / total) * 100)});
-				series.push({key: "Forked",   y: ((tmp["Forked"] / total) * 100)});
+				series.push({key: "Forked",   y: ((tmp["Forked"] / total)   * 100)});
 			}
 
 			result = [series];
