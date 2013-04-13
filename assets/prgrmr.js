@@ -7,16 +7,15 @@
  * @copyright 2013 Jason Mulligan
  * @license BSD-3 <https://raw.github.com/avoidwork/prgrmr/master/LICENSE>
  * @link https://github.com/avoidwork/prgrmr
- * @version 0.1.12
+ * @version 0.1.13
  */
 
-(function (global) {
+(function ($) {
 "use strict";
 
-var $,
-    dColors = ["#FF0000", "#FF7400", "#009999", "#00CC00", "#FFF141", "#A1F73F", "#FFBB00", "#A7A500", "#7B005D", "#450070", "#5F15F6", "#EA0043", "#2AF000", "#41D988", "#3FA9CD", "#046889", "#F09C45", "#7BB000"],
+var dColors = ["#FF0000", "#FF7400", "#009999", "#00CC00", "#FFF141", "#A1F73F", "#FFBB00", "#A7A500", "#7B005D", "#450070", "#5F15F6", "#EA0043", "#2AF000", "#41D988", "#3FA9CD", "#046889", "#F09C45", "#7BB000"],
     eColors = ["CommitCommentEvent", "CreateEvent", "DeleteEvent", "DownloadEvent", "FollowEvent", "ForkEvent", "ForkApplyEvent", "GistEvent", "GollumEvent", "IssueCommentEvent", "IssuesEvent", "MemberEvent", "PublicEvent", "PullRequestEvent", "PullRequestReviewCommentEvent", "PushEvent", "TeamAddEvent", "WatchEvent"],
-    prgrmr  = {config: {}, events: {}, orgs: {}, repos: {}, me: {}, templates: {}, version: "0.1.12"};
+    prgrmr  = {config: {}, events: {}, orgs: {}, repos: {}, me: {}, templates: {}, version: "0.1.13"};
 
 /**
  * GitHub API end points
@@ -89,7 +88,7 @@ var error = function (e) {
 	var msg = e.message || e;
 
 	$.log(msg, "error");
-	global.humane.error(msg);
+	window.humane.error(msg);
 };
 
 /**
@@ -106,7 +105,7 @@ var init = function () {
 	    loading;
 
 	// Setting up humane notifications
-	global.humane.error = global.humane.spawn({addnCls: "humane-jackedup-error", timeout: 3000});
+	window.humane.error = window.humane.spawn({addnCls: "humane-jackedup-error", timeout: 3000});
 
 	// Decorating placeholders
 	if (version !== "undefined") version.html(prgrmr.version);
@@ -134,7 +133,7 @@ var init = function () {
 		});
 
 		// Decorating the global namespace with application
-		global.prgrmr = prgrmr;
+		window.prgrmr = prgrmr;
 	}, function (e) {
 		if (loading !== null) {
 			loading.el.destroy();
@@ -420,15 +419,9 @@ var transform = function (chartType, data, type) {
 	return result;
 };
 
-// Can prgrmr run?
-if (typeof abaaso !== "undefined") {
-	// Setting internal reference
-	$ = global[abaaso.aliased];
+// Setting `render` listener
+$.on("render", function () {
+	init();
+});
 
-	// Setting `render` listener
-	$.on("render", function () {
-		init();
-	});
-}
-
-})(this);
+})(abaaso);

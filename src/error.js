@@ -8,5 +8,5 @@ var error = function (e) {
 	var msg = e.message || e;
 
 	$.log(msg, "error");
-	global.humane.error(msg);
+	window.humane.error(msg);
 };
