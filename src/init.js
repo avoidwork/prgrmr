@@ -12,7 +12,7 @@ var init = function () {
 	    loading;
 
 	// Setting up humane notifications
-	global.humane.error = global.humane.spawn({addnCls: "humane-jackedup-error", timeout: 3000});
+	window.humane.error = window.humane.spawn({addnCls: "humane-jackedup-error", timeout: 3000});
 
 	// Decorating placeholders
 	if (version !== "undefined") version.html(prgrmr.version);
@@ -40,7 +40,7 @@ var init = function () {
 		});
 
 		// Decorating the global namespace with application
-		global.prgrmr = prgrmr;
+		window.prgrmr = prgrmr;
 	}, function (e) {
 		if (loading !== null) {
 			loading.el.destroy();
