@@ -7,15 +7,15 @@
  * @copyright 2013 Jason Mulligan
  * @license BSD-3 <https://raw.github.com/avoidwork/prgrmr/master/LICENSE>
  * @link https://github.com/avoidwork/prgrmr
- * @version 0.1.13
+ * @version 0.1.14
  */
 
-(function ($) {
+(function ($, humane) {
 "use strict";
 
 var dColors = ["#FF0000", "#FF7400", "#009999", "#00CC00", "#FFF141", "#A1F73F", "#FFBB00", "#A7A500", "#7B005D", "#450070", "#5F15F6", "#EA0043", "#2AF000", "#41D988", "#3FA9CD", "#046889", "#F09C45", "#7BB000"],
     eColors = ["CommitCommentEvent", "CreateEvent", "DeleteEvent", "DownloadEvent", "FollowEvent", "ForkEvent", "ForkApplyEvent", "GistEvent", "GollumEvent", "IssueCommentEvent", "IssuesEvent", "MemberEvent", "PublicEvent", "PullRequestEvent", "PullRequestReviewCommentEvent", "PushEvent", "TeamAddEvent", "WatchEvent"],
-    prgrmr  = {config: {}, events: {}, orgs: {}, repos: {}, me: {}, templates: {}, version: "0.1.13"};
+    prgrmr  = {config: {}, events: {}, orgs: {}, repos: {}, me: {}, templates: {}, version: "0.1.14"};
 
 /**
  * GitHub API end points
@@ -88,7 +88,8 @@ var error = function (e) {
 	var msg = e.message || e;
 
 	$.log(msg, "error");
-	window.humane.error(msg);
+
+	humane.error(msg);
 };
 
 /**
@@ -105,7 +106,7 @@ var init = function () {
 	    loading;
 
 	// Setting up humane notifications
-	window.humane.error = window.humane.spawn({addnCls: "humane-jackedup-error", timeout: 3000});
+	humane.error = humane.spawn({addnCls: "humane-jackedup-error", timeout: 3000});
 
 	// Decorating placeholders
 	if (version !== undefined) {
@@ -236,7 +237,10 @@ var log = function (msg, silent) {
 	silent = (silent === true);
 
 	$.log(msg);
-	if (!silent) humane.log(msg);
+
+	if (!silent) {
+		humane.log(msg);
+	}
 };
 
 /**
@@ -290,7 +294,10 @@ var render = function (arg) {
 				rec = prgrmr[arg].data.get(obj.data("key").toString());
 				el  = obj.find("> a")[0];
 				obj.find("> span")[0].addClass(rec.data.fork ? "icon-circle-blank forked" : "icon-circle authored");
-				if (el.attr("href").isEmpty()) el.attr("href", rec.data.html_url);
+
+				if (el.attr("href").isEmpty()) {
+					el.attr("href", rec.data.html_url);
+				}
 				break;
 		}
 	};
@@ -336,7 +343,10 @@ var render = function (arg) {
  */
 var retrieve = function (arg) {
 	var deferred = prgrmr[arg].data.setUri(api[arg]).then(function (args) {
-		if (args.length === 1 && args[0].data.message !== undefined) throw Error(args[0].data.message);
+		if (args.length === 1 && args[0].data.message !== undefined) {
+			throw Error(args[0].data.message);
+		}
+
 		prgrmr[arg].data.save();
 	}, function (e) {
 		throw e;
@@ -448,4 +458,4 @@ $.on("render", function () {
 	init();
 });
 
-})(abaaso);
+})(abaaso, humane);
