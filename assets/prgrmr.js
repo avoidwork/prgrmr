@@ -10,7 +10,7 @@
  * @version 0.1.14
  */
 
-(function ($) {
+(function ($, humane) {
 "use strict";
 
 var dColors = ["#FF0000", "#FF7400", "#009999", "#00CC00", "#FFF141", "#A1F73F", "#FFBB00", "#A7A500", "#7B005D", "#450070", "#5F15F6", "#EA0043", "#2AF000", "#41D988", "#3FA9CD", "#046889", "#F09C45", "#7BB000"],
@@ -88,7 +88,8 @@ var error = function (e) {
 	var msg = e.message || e;
 
 	$.log(msg, "error");
-	window.humane.error(msg);
+
+	humane.error(msg);
 };
 
 /**
@@ -105,7 +106,7 @@ var init = function () {
 	    loading;
 
 	// Setting up humane notifications
-	window.humane.error = window.humane.spawn({addnCls: "humane-jackedup-error", timeout: 3000});
+	humane.error = humane.spawn({addnCls: "humane-jackedup-error", timeout: 3000});
 
 	// Decorating placeholders
 	if (version !== undefined) {
@@ -457,4 +458,4 @@ $.on("render", function () {
 	init();
 });
 
-})(abaaso);
+})(abaaso, humane);
