@@ -12,7 +12,7 @@ var init = function () {
 	    loading;
 
 	// Setting up humane notifications
-	window.humane.error = window.humane.spawn({addnCls: "humane-jackedup-error", timeout: 3000});
+	humane.error = humane.spawn({addnCls: "humane-jackedup-error", timeout: 3000});
 
 	// Decorating placeholders
 	if (version !== undefined) {

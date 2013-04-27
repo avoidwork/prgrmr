@@ -3,4 +3,4 @@ $.on("render", function () {
 	init();
 });
 
-})(abaaso);
+})(abaaso, humane);

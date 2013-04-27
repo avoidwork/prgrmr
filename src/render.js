@@ -33,7 +33,10 @@ var render = function (arg) {
 				rec = prgrmr[arg].data.get(obj.data("key").toString());
 				el  = obj.find("> a")[0];
 				obj.find("> span")[0].addClass(rec.data.fork ? "icon-circle-blank forked" : "icon-circle authored");
-				if (el.attr("href").isEmpty()) el.attr("href", rec.data.html_url);
+
+				if (el.attr("href").isEmpty()) {
+					el.attr("href", rec.data.html_url);
+				}
 				break;
 		}
 	};

@@ -9,5 +9,8 @@ var log = function (msg, silent) {
 	silent = (silent === true);
 
 	$.log(msg);
-	if (!silent) humane.log(msg);
+
+	if (!silent) {
+		humane.log(msg);
+	}
 };
