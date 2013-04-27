@@ -2,7 +2,7 @@
 	"name"     : true,
 	"email"    : true,
 	"blog"     : true,
-	"github"   : "",
+	"github"   : "github",
 	"gplus"    : "",
 	"linkedin" : "",
 	"twitter"  : ""
