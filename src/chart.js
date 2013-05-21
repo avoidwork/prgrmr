@@ -42,6 +42,28 @@ var chart = function (type, title, data, obj, colors) {
 				return obj;
 			};
 			break;
+		case "scatter":
+			arg = function () {
+				nv.addGraph(function() {
+					var obj = nv.models.scatterChart()
+					            .showDistX(true)
+					            .showDistY(true)
+					            .color(d3.scale.category10().range());
+
+					obj.xAxis.tickFormat(d3.format('.02f'))
+					obj.yAxis.tickFormat(d3.format('.02f'))
+
+					d3.select("#" + id)
+					  .datum(randomData(4,40))
+					  .transition().duration(500)
+					  .call(obj);
+
+					nv.utils.windowResize(obj.update);
+
+					return obj;
+				});
+			};
+			break;
 	}
 
 	return nv.addGraph(arg);

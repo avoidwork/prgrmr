@@ -73,6 +73,28 @@ var chart = function (type, title, data, obj, colors) {
 				return obj;
 			};
 			break;
+		case "scatter":
+			arg = function () {
+				nv.addGraph(function() {
+					var obj = nv.models.scatterChart()
+					            .showDistX(true)
+					            .showDistY(true)
+					            .color(d3.scale.category10().range());
+
+					obj.xAxis.tickFormat(d3.format('.02f'))
+					obj.yAxis.tickFormat(d3.format('.02f'))
+
+					d3.select("#" + id)
+					  .datum(randomData(4,40))
+					  .transition().duration(500)
+					  .call(obj);
+
+					nv.utils.windowResize(obj.update);
+
+					return obj;
+				});
+			};
+			break;
 	}
 
 	return nv.addGraph(arg);
@@ -151,12 +173,13 @@ var init = function () {
 		retrieve("me").then(function (recs) {
 			var rec     = recs[0],
 			    contact = $("#contact"),
-			    header  = $("header > h1")[0],
+			    header  = $("header")[0],
 			    title   = $("title")[0];
 
 			// Decorating header & window
 			if (config.name) {
-				header.html(rec.data.name);
+				header.find("h1")[0].html(rec.data.name);
+				header.create("h4").html(rec.data.location);
 				title.html(rec.data.name);
 			}
 

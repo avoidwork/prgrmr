@@ -57,12 +57,13 @@ var init = function () {
 		retrieve("me").then(function (recs) {
 			var rec     = recs[0],
 			    contact = $("#contact"),
-			    header  = $("header > h1")[0],
+			    header  = $("header")[0],
 			    title   = $("title")[0];
 
 			// Decorating header & window
 			if (config.name) {
-				header.html(rec.data.name);
+				header.find("h1")[0].html(rec.data.name);
+				header.create("h4").html(rec.data.location);
 				title.html(rec.data.name);
 			}
 
